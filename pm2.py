@@ -184,7 +184,7 @@ class PM2:
     def clear_screen(self):
         for x in range(0, 40, 2):
             self.bus.write_byte_data(self.defaultAddr, x, 0)
-        self.bus.close()
+        self.bus.write_data(self.defaultAddr, 0b01100000)
         self.bus.open(self.busNum)
 
     def display_all(self):
