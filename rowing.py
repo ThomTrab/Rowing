@@ -23,8 +23,8 @@ class Chrono(object):
         #self.function(*self.args, **self.kwargs)
         self.diff = int(round((time.time() - self.start_time))) + self.diff_pause
         mins, secs = divmod(self.diff, 60)
-        timeformat = '{:02d}:{:02d}'.format(mins, secs)
-        self.display.display(place = "upper", value = timeformat)
+        timeformat = '{:02d}{:02d}'.format(mins, secs)
+        self.display.multi_display(value = timeformat)
 
     def loop(self):
         if not self.is_running:
@@ -62,7 +62,7 @@ def main():
            print("Pause chrono")
            timer.pause()
         elif input == 'clear':
-           PM2.clear_screen()
+           PM2.clear()
         elif input == 'all':
            PM2.display_all()
         input = raw_input('Command:')
