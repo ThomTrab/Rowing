@@ -87,6 +87,9 @@ class PM2:
     def set_segment_middle_colon(self, enabled):
         self.write_bit(19, 1, enabled)
 
+    def set_segment_middle_1(self, enabled):
+        self.write_bit(13, 6, enabled)
+
     def set_segment_lower_ave(self, enabled):
         self.write_bit(13, 7, enabled)
 
@@ -141,12 +144,20 @@ class PM2:
 
     def middle_display(self, value, isTime=True):
         startAddr = 10
-        if (int(value) <= 1999):
+        if (int(value) <= 999):
+            self.set_segment_middle_1(False)
             self.set_segment_middle_colon(isTime)
             self.set_segment_middle_500m(True)
             self.write_digit(startAddr, value)
             self.refresh()
             return True
+        elif (int(value) > 999 & int(value) <= 1999):
+            self.set_segment_middle_1(True)
+            value = value [1:]
+            self.set_segment_middle_colon(isTime)
+            self.set_segment_middle_500m(True)
+            self.write_digit(startAddr, value)
+            self.refresh()
         else:
             return False
 
