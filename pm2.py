@@ -11,7 +11,7 @@ PI_DEFAULT_BUS = 1
 class PM2:
     '''Handle display''''
 
-    #Translation value from String to Display
+    # Translation value from String to Display
     digits = {'': 0,
               '1': 96,
               '2': 167,
@@ -24,8 +24,8 @@ class PM2:
               '9': 235,
               '0': 237
               }
-    
-    buffer =[0 for i in xrange(20)]  # Buffer for device RAM
+
+    buffer = [0 for i in xrange(20)]  # Buffer for device RAM
 
     def __init__(self,
                  defaultBus=PI_DEFAULT_BUS,
@@ -79,8 +79,8 @@ class PM2:
             self.set_segment_dp_top(False)
             self.set_segment_time_top(True)
             self.set_segment_meters_top(False)
-        	self.set_segment_spm_top(True)
-        	self.set_segment_int_top(False)
+            self.set_segment_spm_top(True)
+            self.set_segment_int_top(False)
             self.set_segment_1_middle(False)
             self.set_segment_colon_middle(True)
             self.set_segment_500m_middle(True)
@@ -107,8 +107,8 @@ class PM2:
             self.set_segment_dp_top(False)
             self.set_segment_time_top(True)
             self.set_segment_meters_top(False)
-        	self.set_segment_spm_top(True)
-        	self.set_segment_int_top(False)
+            self.set_segment_spm_top(True)
+            self.set_segment_int_top(False)
             self.set_segment_1_middle(False)
             self.set_segment_colon_middle(False)
             self.set_segment_500m_middle(False)
