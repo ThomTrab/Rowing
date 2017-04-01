@@ -24,7 +24,7 @@ class Chrono(object):
         self.diff = int(round((time.time() - self.start_time))) + self.diff_pause
         mins, secs = divmod(self.diff, 60)
         timeformat = '{:02d}{:02d}'.format(mins, secs)
-        self.display.multi_display(value = timeformat)
+        self.display.top_left(value = timeformat)
 
     def loop(self):
         if not self.is_running:
