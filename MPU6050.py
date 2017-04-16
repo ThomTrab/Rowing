@@ -1,83 +1,83 @@
 from smbus import SMBus
 
 # address pin low (GND), default for InvenSense evaluation board
-MPU6050_ADDRESS_AD0_LOW     = 104
-MPU6050_ADDRESS_AD0_HIGH    = 105  # address pin high (VCC)
-MPU6050_DEFAULT_ADDRESS     = MPU6050_ADDRESS_AD0_LOW
+MPU6050_ADDRESS_AD0_LOW = 104
+MPU6050_ADDRESS_AD0_HIGH = 105  # address pin high (VCC)
+MPU6050_DEFAULT_ADDRESS = MPU6050_ADDRESS_AD0_LOW
 # [7] PWR_MODE, [6:1] XG_OFFS_TC, [0] OTP_BNK_VLD
-MPU6050_RA_XG_OFFS_TC       = 0
+MPU6050_RA_XG_OFFS_TC = 0
 # [7] PWR_MODE, [6:1] YG_OFFS_TC, [0] OTP_BNK_VLD
-MPU6050_RA_YG_OFFS_TC       = 1
+MPU6050_RA_YG_OFFS_TC = 1
 # [7] PWR_MODE, [6:1] ZG_OFFS_TC, [0] OTP_BNK_VLD
-MPU6050_RA_ZG_OFFS_TC       = 2
-MPU6050_RA_X_FINE_GAIN      = 3  # [7:0] X_FINE_GAIN
-MPU6050_RA_Y_FINE_GAIN      = 4  # [7:0] Y_FINE_GAIN
-MPU6050_RA_Z_FINE_GAIN      = 5  # [7:0] Z_FINE_GAIN
-MPU6050_RA_XA_OFFS_H        = 6  # [15:0] XA_OFFS
-MPU6050_RA_XA_OFFS_L_TC     = 7
-MPU6050_RA_YA_OFFS_H        = 8  # [15:0] YA_OFFS
-MPU6050_RA_YA_OFFS_L_TC     = 9
-MPU6050_RA_ZA_OFFS_H        = 10  # [15:0] ZA_OFFS
-MPU6050_RA_ZA_OFFS_L_TC     = 11
-MPU6050_RA_SELF_TEST_X      = 13  # [7:5] XA_TEST[4-2], [4:0] XG_TEST[4-0]
-MPU6050_RA_SELF_TEST_Y      = 14  # [7:5] YA_TEST[4-2], [4:0] YG_TEST[4-0]
-MPU6050_RA_SELF_TEST_Z      = 15  # [7:5] ZA_TEST[4-2], [4:0] ZG_TEST[4-0]
+MPU6050_RA_ZG_OFFS_TC = 2
+MPU6050_RA_X_FINE_GAIN = 3  # [7:0] X_FINE_GAIN
+MPU6050_RA_Y_FINE_GAIN = 4  # [7:0] Y_FINE_GAIN
+MPU6050_RA_Z_FINE_GAIN = 5  # [7:0] Z_FINE_GAIN
+MPU6050_RA_XA_OFFS_H = 6  # [15:0] XA_OFFS
+MPU6050_RA_XA_OFFS_L_TC = 7
+MPU6050_RA_YA_OFFS_H = 8  # [15:0] YA_OFFS
+MPU6050_RA_YA_OFFS_L_TC = 9
+MPU6050_RA_ZA_OFFS_H = 10  # [15:0] ZA_OFFS
+MPU6050_RA_ZA_OFFS_L_TC = 11
+MPU6050_RA_SELF_TEST_X = 13  # [7:5] XA_TEST[4-2], [4:0] XG_TEST[4-0]
+MPU6050_RA_SELF_TEST_Y = 14  # [7:5] YA_TEST[4-2], [4:0] YG_TEST[4-0]
+MPU6050_RA_SELF_TEST_Z = 15  # [7:5] ZA_TEST[4-2], [4:0] ZG_TEST[4-0]
 # [5:4] XA_TEST[1-0], [3:2] YA_TEST[1-0], [1:0] ZA_TEST[1-0]
-MPU6050_RA_SELF_TEST_A      = 16
-MPU6050_RA_XG_OFFS_USRH     = 19  # [15:0] XG_OFFS_USR
-MPU6050_RA_XG_OFFS_USRL     = 20
-MPU6050_RA_YG_OFFS_USRH     = 21  # [15:0] YG_OFFS_USR
-MPU6050_RA_YG_OFFS_USRL     = 22
-MPU6050_RA_ZG_OFFS_USRH     = 23  # [15:0] ZG_OFFS_USR
-MPU6050_RA_ZG_OFFS_USRL     = 24
-MPU6050_RA_SMPLRT_DIV       = 25
-MPU6050_RA_CONFIG           = 26
-MPU6050_RA_GYRO_CONFIG      = 27
-MPU6050_RA_ACCEL_CONFIG     = 28
-MPU6050_RA_FF_THR           = 29
-MPU6050_RA_FF_DUR           = 30
-MPU6050_RA_MOT_THR          = 31
-MPU6050_RA_MOT_DUR          = 32
-MPU6050_RA_ZRMOT_THR        = 33
-MPU6050_RA_ZRMOT_DUR        = 34
-MPU6050_RA_FIFO_EN          = 35
-MPU6050_RA_I2C_MST_CTRL     = 36
-MPU6050_RA_I2C_SLV0_ADDR    = 37
-MPU6050_RA_I2C_SLV0_REG     = 38
-MPU6050_RA_I2C_SLV0_CTRL    = 39
-MPU6050_RA_I2C_SLV1_ADDR    = 40
-MPU6050_RA_I2C_SLV1_REG     = 41
-MPU6050_RA_I2C_SLV1_CTRL    = 42
-MPU6050_RA_I2C_SLV2_ADDR    = 43
-MPU6050_RA_I2C_SLV2_REG     = 44
-MPU6050_RA_I2C_SLV2_CTRL    = 45
-MPU6050_RA_I2C_SLV3_ADDR    = 46
-MPU6050_RA_I2C_SLV3_REG     = 47
-MPU6050_RA_I2C_SLV3_CTRL    = 48
-MPU6050_RA_I2C_SLV4_ADDR    = 49
-MPU6050_RA_I2C_SLV4_REG     = 50
-MPU6050_RA_I2C_SLV4_DO      = 51
-MPU6050_RA_I2C_SLV4_CTRL    = 52
-MPU6050_RA_I2C_SLV4_DI      = 53
-MPU6050_RA_I2C_MST_STATUS   = 54
-MPU6050_RA_INT_PIN_CFG      = 55
-MPU6050_RA_INT_ENABLE       = 56
-MPU6050_RA_DMP_INT_STATUS   = 57
-MPU6050_RA_INT_STATUS       = 58
-MPU6050_RA_ACCEL_XOUT_H     = 59
-MPU6050_RA_ACCEL_XOUT_L     = 60
-MPU6050_RA_ACCEL_YOUT_H     = 61
-MPU6050_RA_ACCEL_YOUT_L     = 62
-MPU6050_RA_ACCEL_ZOUT_H     = 63
-MPU6050_RA_ACCEL_ZOUT_L     = 64
-MPU6050_RA_TEMP_OUT_H       = 65
-MPU6050_RA_TEMP_OUT_L       = 66
-MPU6050_RA_GYRO_XOUT_H      = 67
-MPU6050_RA_GYRO_XOUT_L      = 68
-MPU6050_RA_GYRO_YOUT_H      = 69
-MPU6050_RA_GYRO_YOUT_L      = 70
-MPU6050_RA_GYRO_ZOUT_H      = 71
-MPU6050_RA_GYRO_ZOUT_L      = 72
+MPU6050_RA_SELF_TEST_A = 16
+MPU6050_RA_XG_OFFS_USRH = 19  # [15:0] XG_OFFS_USR
+MPU6050_RA_XG_OFFS_USRL = 20
+MPU6050_RA_YG_OFFS_USRH = 21  # [15:0] YG_OFFS_USR
+MPU6050_RA_YG_OFFS_USRL = 22
+MPU6050_RA_ZG_OFFS_USRH = 23  # [15:0] ZG_OFFS_USR
+MPU6050_RA_ZG_OFFS_USRL = 24
+MPU6050_RA_SMPLRT_DIV = 25
+MPU6050_RA_CONFIG = 26
+MPU6050_RA_GYRO_CONFIG = 27
+MPU6050_RA_ACCEL_CONFIG = 28
+MPU6050_RA_FF_THR = 29
+MPU6050_RA_FF_DUR = 30
+MPU6050_RA_MOT_THR = 31
+MPU6050_RA_MOT_DUR = 32
+MPU6050_RA_ZRMOT_THR = 33
+MPU6050_RA_ZRMOT_DUR = 34
+MPU6050_RA_FIFO_EN = 35
+MPU6050_RA_I2C_MST_CTRL = 36
+MPU6050_RA_I2C_SLV0_ADDR = 37
+MPU6050_RA_I2C_SLV0_REG = 38
+MPU6050_RA_I2C_SLV0_CTRL = 39
+MPU6050_RA_I2C_SLV1_ADDR = 40
+MPU6050_RA_I2C_SLV1_REG = 41
+MPU6050_RA_I2C_SLV1_CTRL = 42
+MPU6050_RA_I2C_SLV2_ADDR = 43
+MPU6050_RA_I2C_SLV2_REG = 44
+MPU6050_RA_I2C_SLV2_CTRL = 45
+MPU6050_RA_I2C_SLV3_ADDR = 46
+MPU6050_RA_I2C_SLV3_REG = 47
+MPU6050_RA_I2C_SLV3_CTRL = 48
+MPU6050_RA_I2C_SLV4_ADDR = 49
+MPU6050_RA_I2C_SLV4_REG = 50
+MPU6050_RA_I2C_SLV4_DO = 51
+MPU6050_RA_I2C_SLV4_CTRL = 52
+MPU6050_RA_I2C_SLV4_DI = 53
+MPU6050_RA_I2C_MST_STATUS = 54
+MPU6050_RA_INT_PIN_CFG = 55
+MPU6050_RA_INT_ENABLE = 56
+MPU6050_RA_DMP_INT_STATUS = 57
+MPU6050_RA_INT_STATUS = 58
+MPU6050_RA_ACCEL_XOUT_H = 59
+MPU6050_RA_ACCEL_XOUT_L = 60
+MPU6050_RA_ACCEL_YOUT_H = 61
+MPU6050_RA_ACCEL_YOUT_L = 62
+MPU6050_RA_ACCEL_ZOUT_H = 63
+MPU6050_RA_ACCEL_ZOUT_L = 64
+MPU6050_RA_TEMP_OUT_H = 65
+MPU6050_RA_TEMP_OUT_L = 66
+MPU6050_RA_GYRO_XOUT_H = 67
+MPU6050_RA_GYRO_XOUT_L = 68
+MPU6050_RA_GYRO_YOUT_H = 69
+MPU6050_RA_GYRO_YOUT_L = 70
+MPU6050_RA_GYRO_ZOUT_H = 71
+MPU6050_RA_GYRO_ZOUT_L = 72
 MPU6050_RA_EXT_SENS_DATA_00 = 73
 MPU6050_RA_EXT_SENS_DATA_01 = 74
 MPU6050_RA_EXT_SENS_DATA_02 = 75
@@ -102,285 +102,285 @@ MPU6050_RA_EXT_SENS_DATA_20 = 93
 MPU6050_RA_EXT_SENS_DATA_21 = 94
 MPU6050_RA_EXT_SENS_DATA_22 = 95
 MPU6050_RA_EXT_SENS_DATA_23 = 96
-MPU6050_RA_MOT_DETECT_STATUS  = 97
-MPU6050_RA_I2C_SLV0_DO      = 99
-MPU6050_RA_I2C_SLV1_DO      = 100
-MPU6050_RA_I2C_SLV2_DO      = 101
-MPU6050_RA_I2C_SLV3_DO      = 102
+MPU6050_RA_MOT_DETECT_STATUS = 97
+MPU6050_RA_I2C_SLV0_DO = 99
+MPU6050_RA_I2C_SLV1_DO = 100
+MPU6050_RA_I2C_SLV2_DO = 101
+MPU6050_RA_I2C_SLV3_DO = 102
 MPU6050_RA_I2C_MST_DELAY_CTRL = 103
-MPU6050_RA_SIGNAL_PATH_RESET  = 104
-MPU6050_RA_MOT_DETECT_CTRL    = 105
-MPU6050_RA_USER_CTRL        = 106
-MPU6050_RA_PWR_MGMT_1       = 107
-MPU6050_RA_PWR_MGMT_2       = 108
-MPU6050_RA_BANK_SEL         = 109
-MPU6050_RA_MEM_START_ADDR   = 110
-MPU6050_RA_MEM_R_W          = 111
-MPU6050_RA_DMP_CFG_1        = 112
-MPU6050_RA_DMP_CFG_2        = 113
-MPU6050_RA_FIFO_COUNTH      = 114
-MPU6050_RA_FIFO_COUNTL      = 115
-MPU6050_RA_FIFO_R_W         = 116
-MPU6050_RA_WHO_AM_I         = 117
+MPU6050_RA_SIGNAL_PATH_RESET = 104
+MPU6050_RA_MOT_DETECT_CTRL = 105
+MPU6050_RA_USER_CTRL = 106
+MPU6050_RA_PWR_MGMT_1 = 107
+MPU6050_RA_PWR_MGMT_2 = 108
+MPU6050_RA_BANK_SEL = 109
+MPU6050_RA_MEM_START_ADDR = 110
+MPU6050_RA_MEM_R_W = 111
+MPU6050_RA_DMP_CFG_1 = 112
+MPU6050_RA_DMP_CFG_2 = 113
+MPU6050_RA_FIFO_COUNTH = 114
+MPU6050_RA_FIFO_COUNTL = 115
+MPU6050_RA_FIFO_R_W = 116
+MPU6050_RA_WHO_AM_I = 117
 
-MPU6050_SELF_TEST_XA_1_BIT    = 7
+MPU6050_SELF_TEST_XA_1_BIT = 7
 MPU6050_SELF_TEST_XA_1_LENGTH = 3
-MPU6050_SELF_TEST_XA_2_BIT    = 5
+MPU6050_SELF_TEST_XA_2_BIT = 5
 MPU6050_SELF_TEST_XA_2_LENGTH = 2
-MPU6050_SELF_TEST_YA_1_BIT    = 7
+MPU6050_SELF_TEST_YA_1_BIT = 7
 MPU6050_SELF_TEST_YA_1_LENGTH = 3
-MPU6050_SELF_TEST_YA_2_BIT    = 3
+MPU6050_SELF_TEST_YA_2_BIT = 3
 MPU6050_SELF_TEST_YA_2_LENGTH = 2
-MPU6050_SELF_TEST_ZA_1_BIT    = 7
+MPU6050_SELF_TEST_ZA_1_BIT = 7
 MPU6050_SELF_TEST_ZA_1_LENGTH = 3
-MPU6050_SELF_TEST_ZA_2_BIT    = 1
+MPU6050_SELF_TEST_ZA_2_BIT = 1
 MPU6050_SELF_TEST_ZA_2_LENGTH = 2
 
-MPU6050_SELF_TEST_XG_1_BIT    = 4
+MPU6050_SELF_TEST_XG_1_BIT = 4
 MPU6050_SELF_TEST_XG_1_LENGTH = 5
-MPU6050_SELF_TEST_YG_1_BIT    = 4
+MPU6050_SELF_TEST_YG_1_BIT = 4
 MPU6050_SELF_TEST_YG_1_LENGTH = 5
-MPU6050_SELF_TEST_ZG_1_BIT    = 4
+MPU6050_SELF_TEST_ZG_1_BIT = 4
 MPU6050_SELF_TEST_ZG_1_LENGTH = 5
 
-MPU6050_TC_PWR_MODE_BIT    = 7
-MPU6050_TC_OFFSET_BIT      = 6
-MPU6050_TC_OFFSET_LENGTH   = 6
+MPU6050_TC_PWR_MODE_BIT = 7
+MPU6050_TC_OFFSET_BIT = 6
+MPU6050_TC_OFFSET_LENGTH = 6
 MPU6050_TC_OTP_BNK_VLD_BIT = 0
 
 MPU6050_VDDIO_LEVEL_VLOGIC = 0
-MPU6050_VDDIO_LEVEL_VDD    = 1
+MPU6050_VDDIO_LEVEL_VDD = 1
 
-MPU6050_CFG_EXT_SYNC_SET_BIT    = 5
+MPU6050_CFG_EXT_SYNC_SET_BIT = 5
 MPU6050_CFG_EXT_SYNC_SET_LENGTH = 3
-MPU6050_CFG_DLPF_CFG_BIT    = 2
+MPU6050_CFG_DLPF_CFG_BIT = 2
 MPU6050_CFG_DLPF_CFG_LENGTH = 3
 
-MPU6050_EXT_SYNC_DISABLED      = 0
-MPU6050_EXT_SYNC_TEMP_OUT_L    = 1
-MPU6050_EXT_SYNC_GYRO_XOUT_L   = 2
-MPU6050_EXT_SYNC_GYRO_YOUT_L   = 3
-MPU6050_EXT_SYNC_GYRO_ZOUT_L   = 4
-MPU6050_EXT_SYNC_ACCEL_XOUT_L  = 5
-MPU6050_EXT_SYNC_ACCEL_YOUT_L  = 6
-MPU6050_EXT_SYNC_ACCEL_ZOUT_L  = 7
+MPU6050_EXT_SYNC_DISABLED = 0
+MPU6050_EXT_SYNC_TEMP_OUT_L = 1
+MPU6050_EXT_SYNC_GYRO_XOUT_L = 2
+MPU6050_EXT_SYNC_GYRO_YOUT_L = 3
+MPU6050_EXT_SYNC_GYRO_ZOUT_L = 4
+MPU6050_EXT_SYNC_ACCEL_XOUT_L = 5
+MPU6050_EXT_SYNC_ACCEL_YOUT_L = 6
+MPU6050_EXT_SYNC_ACCEL_ZOUT_L = 7
 
-MPU6050_DLPF_BW_256        = 0
-MPU6050_DLPF_BW_188        = 1
-MPU6050_DLPF_BW_98         = 2
-MPU6050_DLPF_BW_42         = 3
-MPU6050_DLPF_BW_20         = 4
-MPU6050_DLPF_BW_10         = 5
-MPU6050_DLPF_BW_5          = 6
+MPU6050_DLPF_BW_256 = 0
+MPU6050_DLPF_BW_188 = 1
+MPU6050_DLPF_BW_98 = 2
+MPU6050_DLPF_BW_42 = 3
+MPU6050_DLPF_BW_20 = 4
+MPU6050_DLPF_BW_10 = 5
+MPU6050_DLPF_BW_5 = 6
 
-MPU6050_GCONFIG_FS_SEL_BIT     = 4
-MPU6050_GCONFIG_FS_SEL_LENGTH  = 2
+MPU6050_GCONFIG_FS_SEL_BIT = 4
+MPU6050_GCONFIG_FS_SEL_LENGTH = 2
 
-MPU6050_GYRO_FS_250        = 0
-MPU6050_GYRO_FS_500        = 1
-MPU6050_GYRO_FS_1000       = 2
-MPU6050_GYRO_FS_2000       = 3
+MPU6050_GYRO_FS_250 = 0
+MPU6050_GYRO_FS_500 = 1
+MPU6050_GYRO_FS_1000 = 2
+MPU6050_GYRO_FS_2000 = 3
 
-MPU6050_ACONFIG_XA_ST_BIT          = 7
-MPU6050_ACONFIG_YA_ST_BIT          = 6
-MPU6050_ACONFIG_ZA_ST_BIT          = 5
-MPU6050_ACONFIG_AFS_SEL_BIT        = 4
-MPU6050_ACONFIG_AFS_SEL_LENGTH     = 2
-MPU6050_ACONFIG_ACCEL_HPF_BIT      = 2
-MPU6050_ACONFIG_ACCEL_HPF_LENGTH   = 3
+MPU6050_ACONFIG_XA_ST_BIT = 7
+MPU6050_ACONFIG_YA_ST_BIT = 6
+MPU6050_ACONFIG_ZA_ST_BIT = 5
+MPU6050_ACONFIG_AFS_SEL_BIT = 4
+MPU6050_ACONFIG_AFS_SEL_LENGTH = 2
+MPU6050_ACONFIG_ACCEL_HPF_BIT = 2
+MPU6050_ACONFIG_ACCEL_HPF_LENGTH = 3
 
-MPU6050_ACCEL_FS_2         = 0
-MPU6050_ACCEL_FS_4         = 1
-MPU6050_ACCEL_FS_8         = 2
-MPU6050_ACCEL_FS_16        = 3
+MPU6050_ACCEL_FS_2 = 0
+MPU6050_ACCEL_FS_4 = 1
+MPU6050_ACCEL_FS_8 = 2
+MPU6050_ACCEL_FS_16 = 3
 
-MPU6050_DHPF_RESET         = 0
-MPU6050_DHPF_5             = 1
-MPU6050_DHPF_2P5           = 2
-MPU6050_DHPF_1P25          = 3
-MPU6050_DHPF_0P63          = 4
-MPU6050_DHPF_HOLD          = 7
+MPU6050_DHPF_RESET = 0
+MPU6050_DHPF_5 = 1
+MPU6050_DHPF_2P5 = 2
+MPU6050_DHPF_1P25 = 3
+MPU6050_DHPF_0P63 = 4
+MPU6050_DHPF_HOLD = 7
 
-MPU6050_TEMP_FIFO_EN_BIT   = 7
-MPU6050_XG_FIFO_EN_BIT     = 6
-MPU6050_YG_FIFO_EN_BIT     = 5
-MPU6050_ZG_FIFO_EN_BIT     = 4
-MPU6050_ACCEL_FIFO_EN_BIT  = 3
-MPU6050_SLV2_FIFO_EN_BIT   = 2
-MPU6050_SLV1_FIFO_EN_BIT   = 1
-MPU6050_SLV0_FIFO_EN_BIT   = 0
+MPU6050_TEMP_FIFO_EN_BIT = 7
+MPU6050_XG_FIFO_EN_BIT = 6
+MPU6050_YG_FIFO_EN_BIT = 5
+MPU6050_ZG_FIFO_EN_BIT = 4
+MPU6050_ACCEL_FIFO_EN_BIT = 3
+MPU6050_SLV2_FIFO_EN_BIT = 2
+MPU6050_SLV1_FIFO_EN_BIT = 1
+MPU6050_SLV0_FIFO_EN_BIT = 0
 
-MPU6050_MULT_MST_EN_BIT    = 7
-MPU6050_WAIT_FOR_ES_BIT    = 6
-MPU6050_SLV_3_FIFO_EN_BIT  = 5
-MPU6050_I2C_MST_P_NSR_BIT  = 4
-MPU6050_I2C_MST_CLK_BIT    = 3
+MPU6050_MULT_MST_EN_BIT = 7
+MPU6050_WAIT_FOR_ES_BIT = 6
+MPU6050_SLV_3_FIFO_EN_BIT = 5
+MPU6050_I2C_MST_P_NSR_BIT = 4
+MPU6050_I2C_MST_CLK_BIT = 3
 MPU6050_I2C_MST_CLK_LENGTH = 4
 
-MPU6050_CLOCK_DIV_348      = 0
-MPU6050_CLOCK_DIV_333      = 1
-MPU6050_CLOCK_DIV_320      = 2
-MPU6050_CLOCK_DIV_308      = 3
-MPU6050_CLOCK_DIV_296      = 4
-MPU6050_CLOCK_DIV_286      = 5
-MPU6050_CLOCK_DIV_276      = 6
-MPU6050_CLOCK_DIV_267      = 7
-MPU6050_CLOCK_DIV_258      = 8
-MPU6050_CLOCK_DIV_500      = 9
-MPU6050_CLOCK_DIV_471      = 10
-MPU6050_CLOCK_DIV_444      = 11
-MPU6050_CLOCK_DIV_421      = 12
-MPU6050_CLOCK_DIV_400      = 13
-MPU6050_CLOCK_DIV_381      = 14
-MPU6050_CLOCK_DIV_364      = 15
+MPU6050_CLOCK_DIV_348 = 0
+MPU6050_CLOCK_DIV_333 = 1
+MPU6050_CLOCK_DIV_320 = 2
+MPU6050_CLOCK_DIV_308 = 3
+MPU6050_CLOCK_DIV_296 = 4
+MPU6050_CLOCK_DIV_286 = 5
+MPU6050_CLOCK_DIV_276 = 6
+MPU6050_CLOCK_DIV_267 = 7
+MPU6050_CLOCK_DIV_258 = 8
+MPU6050_CLOCK_DIV_500 = 9
+MPU6050_CLOCK_DIV_471 = 10
+MPU6050_CLOCK_DIV_444 = 11
+MPU6050_CLOCK_DIV_421 = 12
+MPU6050_CLOCK_DIV_400 = 13
+MPU6050_CLOCK_DIV_381 = 14
+MPU6050_CLOCK_DIV_364 = 15
 
-MPU6050_I2C_SLV_RW_BIT      = 7
-MPU6050_I2C_SLV_ADDR_BIT    = 6
+MPU6050_I2C_SLV_RW_BIT = 7
+MPU6050_I2C_SLV_ADDR_BIT = 6
 MPU6050_I2C_SLV_ADDR_LENGTH = 7
-MPU6050_I2C_SLV_EN_BIT      = 7
+MPU6050_I2C_SLV_EN_BIT = 7
 MPU6050_I2C_SLV_BYTE_SW_BIT = 6
 MPU6050_I2C_SLV_REG_DIS_BIT = 5
-MPU6050_I2C_SLV_GRP_BIT     = 4
-MPU6050_I2C_SLV_LEN_BIT     = 3
-MPU6050_I2C_SLV_LEN_LENGTH  = 4
+MPU6050_I2C_SLV_GRP_BIT = 4
+MPU6050_I2C_SLV_LEN_BIT = 3
+MPU6050_I2C_SLV_LEN_LENGTH = 4
 
-MPU6050_I2C_SLV4_RW_BIT        = 7
-MPU6050_I2C_SLV4_ADDR_BIT      = 6
-MPU6050_I2C_SLV4_ADDR_LENGTH   = 7
-MPU6050_I2C_SLV4_EN_BIT        = 7
-MPU6050_I2C_SLV4_INT_EN_BIT    = 6
-MPU6050_I2C_SLV4_REG_DIS_BIT   = 5
-MPU6050_I2C_SLV4_MST_DLY_BIT   = 4
+MPU6050_I2C_SLV4_RW_BIT = 7
+MPU6050_I2C_SLV4_ADDR_BIT = 6
+MPU6050_I2C_SLV4_ADDR_LENGTH = 7
+MPU6050_I2C_SLV4_EN_BIT = 7
+MPU6050_I2C_SLV4_INT_EN_BIT = 6
+MPU6050_I2C_SLV4_REG_DIS_BIT = 5
+MPU6050_I2C_SLV4_MST_DLY_BIT = 4
 MPU6050_I2C_SLV4_MST_DLY_LENGTH = 5
 
-MPU6050_MST_PASS_THROUGH_BIT   = 7
-MPU6050_MST_I2C_SLV4_DONE_BIT  = 6
-MPU6050_MST_I2C_LOST_ARB_BIT   = 5
-MPU6050_MST_I2C_SLV4_NACK_BIT  = 4
-MPU6050_MST_I2C_SLV3_NACK_BIT  = 3
-MPU6050_MST_I2C_SLV2_NACK_BIT  = 2
-MPU6050_MST_I2C_SLV1_NACK_BIT  = 1
-MPU6050_MST_I2C_SLV0_NACK_BIT  = 0
+MPU6050_MST_PASS_THROUGH_BIT = 7
+MPU6050_MST_I2C_SLV4_DONE_BIT = 6
+MPU6050_MST_I2C_LOST_ARB_BIT = 5
+MPU6050_MST_I2C_SLV4_NACK_BIT = 4
+MPU6050_MST_I2C_SLV3_NACK_BIT = 3
+MPU6050_MST_I2C_SLV2_NACK_BIT = 2
+MPU6050_MST_I2C_SLV1_NACK_BIT = 1
+MPU6050_MST_I2C_SLV0_NACK_BIT = 0
 
-MPU6050_INTCFG_INT_LEVEL_BIT       = 7
-MPU6050_INTCFG_INT_OPEN_BIT        = 6
-MPU6050_INTCFG_LATCH_INT_EN_BIT    = 5
-MPU6050_INTCFG_INT_RD_CLEAR_BIT    = 4
+MPU6050_INTCFG_INT_LEVEL_BIT = 7
+MPU6050_INTCFG_INT_OPEN_BIT = 6
+MPU6050_INTCFG_LATCH_INT_EN_BIT = 5
+MPU6050_INTCFG_INT_RD_CLEAR_BIT = 4
 MPU6050_INTCFG_FSYNC_INT_LEVEL_BIT = 3
-MPU6050_INTCFG_FSYNC_INT_EN_BIT    = 2
-MPU6050_INTCFG_I2C_BYPASS_EN_BIT   = 1
-MPU6050_INTCFG_CLKOUT_EN_BIT       = 0
+MPU6050_INTCFG_FSYNC_INT_EN_BIT = 2
+MPU6050_INTCFG_I2C_BYPASS_EN_BIT = 1
+MPU6050_INTCFG_CLKOUT_EN_BIT = 0
 
 MPU6050_INTMODE_ACTIVEHIGH = 0
-MPU6050_INTMODE_ACTIVELOW  = 1
+MPU6050_INTMODE_ACTIVELOW = 1
 
-MPU6050_INTDRV_PUSHPULL    = 0
-MPU6050_INTDRV_OPENDRAIN   = 1
+MPU6050_INTDRV_PUSHPULL = 0
+MPU6050_INTDRV_OPENDRAIN = 1
 
 MPU6050_INTLATCH_50USPULSE = 0
 MPU6050_INTLATCH_WAITCLEAR = 1
 
 MPU6050_INTCLEAR_STATUSREAD = 0
-MPU6050_INTCLEAR_ANYREAD    = 1
+MPU6050_INTCLEAR_ANYREAD = 1
 
-MPU6050_INTERRUPT_FF_BIT           = 7
-MPU6050_INTERRUPT_MOT_BIT          = 6
-MPU6050_INTERRUPT_ZMOT_BIT         = 5
-MPU6050_INTERRUPT_FIFO_OFLOW_BIT   = 4
-MPU6050_INTERRUPT_I2C_MST_INT_BIT  = 3
-MPU6050_INTERRUPT_PLL_RDY_INT_BIT  = 2
-MPU6050_INTERRUPT_DMP_INT_BIT      = 1
-MPU6050_INTERRUPT_DATA_RDY_BIT     = 0
+MPU6050_INTERRUPT_FF_BIT = 7
+MPU6050_INTERRUPT_MOT_BIT = 6
+MPU6050_INTERRUPT_ZMOT_BIT = 5
+MPU6050_INTERRUPT_FIFO_OFLOW_BIT = 4
+MPU6050_INTERRUPT_I2C_MST_INT_BIT = 3
+MPU6050_INTERRUPT_PLL_RDY_INT_BIT = 2
+MPU6050_INTERRUPT_DMP_INT_BIT = 1
+MPU6050_INTERRUPT_DATA_RDY_BIT = 0
 
 # TODO: figure out what these actually do
 # UMPL source code is not very obivous
-MPU6050_DMPINT_5_BIT           = 5
-MPU6050_DMPINT_4_BIT           = 4
-MPU6050_DMPINT_3_BIT           = 3
-MPU6050_DMPINT_2_BIT           = 2
-MPU6050_DMPINT_1_BIT           = 1
-MPU6050_DMPINT_0_BIT           = 0
+MPU6050_DMPINT_5_BIT = 5
+MPU6050_DMPINT_4_BIT = 4
+MPU6050_DMPINT_3_BIT = 3
+MPU6050_DMPINT_2_BIT = 2
+MPU6050_DMPINT_1_BIT = 1
+MPU6050_DMPINT_0_BIT = 0
 
-MPU6050_MOTION_MOT_XNEG_BIT    = 7
-MPU6050_MOTION_MOT_XPOS_BIT    = 6
-MPU6050_MOTION_MOT_YNEG_BIT    = 5
-MPU6050_MOTION_MOT_YPOS_BIT    = 4
-MPU6050_MOTION_MOT_ZNEG_BIT    = 3
-MPU6050_MOTION_MOT_ZPOS_BIT    = 2
-MPU6050_MOTION_MOT_ZRMOT_BIT   = 0
+MPU6050_MOTION_MOT_XNEG_BIT = 7
+MPU6050_MOTION_MOT_XPOS_BIT = 6
+MPU6050_MOTION_MOT_YNEG_BIT = 5
+MPU6050_MOTION_MOT_YPOS_BIT = 4
+MPU6050_MOTION_MOT_ZNEG_BIT = 3
+MPU6050_MOTION_MOT_ZPOS_BIT = 2
+MPU6050_MOTION_MOT_ZRMOT_BIT = 0
 
-MPU6050_DELAYCTRL_DELAY_ES_SHADOW_BIT  = 7
-MPU6050_DELAYCTRL_I2C_SLV4_DLY_EN_BIT  = 4
-MPU6050_DELAYCTRL_I2C_SLV3_DLY_EN_BIT  = 3
-MPU6050_DELAYCTRL_I2C_SLV2_DLY_EN_BIT  = 2
-MPU6050_DELAYCTRL_I2C_SLV1_DLY_EN_BIT  = 1
-MPU6050_DELAYCTRL_I2C_SLV0_DLY_EN_BIT  = 0
+MPU6050_DELAYCTRL_DELAY_ES_SHADOW_BIT = 7
+MPU6050_DELAYCTRL_I2C_SLV4_DLY_EN_BIT = 4
+MPU6050_DELAYCTRL_I2C_SLV3_DLY_EN_BIT = 3
+MPU6050_DELAYCTRL_I2C_SLV2_DLY_EN_BIT = 2
+MPU6050_DELAYCTRL_I2C_SLV1_DLY_EN_BIT = 1
+MPU6050_DELAYCTRL_I2C_SLV0_DLY_EN_BIT = 0
 
-MPU6050_PATHRESET_GYRO_RESET_BIT   = 2
-MPU6050_PATHRESET_ACCEL_RESET_BIT  = 1
-MPU6050_PATHRESET_TEMP_RESET_BIT   = 0
+MPU6050_PATHRESET_GYRO_RESET_BIT = 2
+MPU6050_PATHRESET_ACCEL_RESET_BIT = 1
+MPU6050_PATHRESET_TEMP_RESET_BIT = 0
 
-MPU6050_DETECT_ACCEL_ON_DELAY_BIT      = 5
-MPU6050_DETECT_ACCEL_ON_DELAY_LENGTH   = 2
-MPU6050_DETECT_FF_COUNT_BIT            = 3
-MPU6050_DETECT_FF_COUNT_LENGTH         = 2
-MPU6050_DETECT_MOT_COUNT_BIT           = 1
-MPU6050_DETECT_MOT_COUNT_LENGTH        = 2
+MPU6050_DETECT_ACCEL_ON_DELAY_BIT = 5
+MPU6050_DETECT_ACCEL_ON_DELAY_LENGTH = 2
+MPU6050_DETECT_FF_COUNT_BIT = 3
+MPU6050_DETECT_FF_COUNT_LENGTH = 2
+MPU6050_DETECT_MOT_COUNT_BIT = 1
+MPU6050_DETECT_MOT_COUNT_LENGTH = 2
 
-MPU6050_DETECT_DECREMENT_RESET  = 0
-MPU6050_DETECT_DECREMENT_1      = 1
-MPU6050_DETECT_DECREMENT_2      = 2
-MPU6050_DETECT_DECREMENT_4      = 3
+MPU6050_DETECT_DECREMENT_RESET = 0
+MPU6050_DETECT_DECREMENT_1 = 1
+MPU6050_DETECT_DECREMENT_2 = 2
+MPU6050_DETECT_DECREMENT_4 = 3
 
-MPU6050_USERCTRL_DMP_EN_BIT            = 7
-MPU6050_USERCTRL_FIFO_EN_BIT           = 6
-MPU6050_USERCTRL_I2C_MST_EN_BIT        = 5
-MPU6050_USERCTRL_I2C_IF_DIS_BIT        = 4
-MPU6050_USERCTRL_DMP_RESET_BIT         = 3
-MPU6050_USERCTRL_FIFO_RESET_BIT        = 2
-MPU6050_USERCTRL_I2C_MST_RESET_BIT     = 1
-MPU6050_USERCTRL_SIG_COND_RESET_BIT    = 0
+MPU6050_USERCTRL_DMP_EN_BIT = 7
+MPU6050_USERCTRL_FIFO_EN_BIT = 6
+MPU6050_USERCTRL_I2C_MST_EN_BIT = 5
+MPU6050_USERCTRL_I2C_IF_DIS_BIT = 4
+MPU6050_USERCTRL_DMP_RESET_BIT = 3
+MPU6050_USERCTRL_FIFO_RESET_BIT = 2
+MPU6050_USERCTRL_I2C_MST_RESET_BIT = 1
+MPU6050_USERCTRL_SIG_COND_RESET_BIT = 0
 
-MPU6050_PWR1_DEVICE_RESET_BIT  = 7
-MPU6050_PWR1_SLEEP_BIT         = 6
-MPU6050_PWR1_CYCLE_BIT         = 5
-MPU6050_PWR1_TEMP_DIS_BIT      = 3
-MPU6050_PWR1_CLKSEL_BIT        = 2
-MPU6050_PWR1_CLKSEL_LENGTH     = 3
+MPU6050_PWR1_DEVICE_RESET_BIT = 7
+MPU6050_PWR1_SLEEP_BIT = 6
+MPU6050_PWR1_CYCLE_BIT = 5
+MPU6050_PWR1_TEMP_DIS_BIT = 3
+MPU6050_PWR1_CLKSEL_BIT = 2
+MPU6050_PWR1_CLKSEL_LENGTH = 3
 
-MPU6050_CLOCK_INTERNAL         = 0
-MPU6050_CLOCK_PLL_XGYRO        = 1
-MPU6050_CLOCK_PLL_YGYRO        = 2
-MPU6050_CLOCK_PLL_ZGYRO        = 3
-MPU6050_CLOCK_PLL_EXT32K       = 4
-MPU6050_CLOCK_PLL_EXT19M       = 5
-MPU6050_CLOCK_KEEP_RESET       = 7
+MPU6050_CLOCK_INTERNAL = 0
+MPU6050_CLOCK_PLL_XGYRO = 1
+MPU6050_CLOCK_PLL_YGYRO = 2
+MPU6050_CLOCK_PLL_ZGYRO = 3
+MPU6050_CLOCK_PLL_EXT32K = 4
+MPU6050_CLOCK_PLL_EXT19M = 5
+MPU6050_CLOCK_KEEP_RESET = 7
 
-MPU6050_PWR2_LP_WAKE_CTRL_BIT      = 7
-MPU6050_PWR2_LP_WAKE_CTRL_LENGTH   = 2
-MPU6050_PWR2_STBY_XA_BIT           = 5
-MPU6050_PWR2_STBY_YA_BIT           = 4
-MPU6050_PWR2_STBY_ZA_BIT           = 3
-MPU6050_PWR2_STBY_XG_BIT           = 2
-MPU6050_PWR2_STBY_YG_BIT           = 1
-MPU6050_PWR2_STBY_ZG_BIT           = 0
+MPU6050_PWR2_LP_WAKE_CTRL_BIT = 7
+MPU6050_PWR2_LP_WAKE_CTRL_LENGTH = 2
+MPU6050_PWR2_STBY_XA_BIT = 5
+MPU6050_PWR2_STBY_YA_BIT = 4
+MPU6050_PWR2_STBY_ZA_BIT = 3
+MPU6050_PWR2_STBY_XG_BIT = 2
+MPU6050_PWR2_STBY_YG_BIT = 1
+MPU6050_PWR2_STBY_ZG_BIT = 0
 
-MPU6050_WAKE_FREQ_1P25     = 0
-MPU6050_WAKE_FREQ_2P5      = 1
-MPU6050_WAKE_FREQ_5        = 2
-MPU6050_WAKE_FREQ_10       = 3
+MPU6050_WAKE_FREQ_1P25 = 0
+MPU6050_WAKE_FREQ_2P5 = 1
+MPU6050_WAKE_FREQ_5 = 2
+MPU6050_WAKE_FREQ_10 = 3
 
-MPU6050_BANKSEL_PRFTCH_EN_BIT      = 6
-MPU6050_BANKSEL_CFG_USER_BANK_BIT  = 5
-MPU6050_BANKSEL_MEM_SEL_BIT        = 4
-MPU6050_BANKSEL_MEM_SEL_LENGTH     = 5
+MPU6050_BANKSEL_PRFTCH_EN_BIT = 6
+MPU6050_BANKSEL_CFG_USER_BANK_BIT = 5
+MPU6050_BANKSEL_MEM_SEL_BIT = 4
+MPU6050_BANKSEL_MEM_SEL_LENGTH = 5
 
-MPU6050_WHO_AM_I_BIT       = 6
-MPU6050_WHO_AM_I_LENGTH    = 6
+MPU6050_WHO_AM_I_BIT = 6
+MPU6050_WHO_AM_I_LENGTH = 6
 
-MPU6050_DMP_MEMORY_BANKS       = 8
-MPU6050_DMP_MEMORY_BANK_SIZE   = 256
-MPU6050_DMP_MEMORY_CHUNK_SIZE  = 16
+MPU6050_DMP_MEMORY_BANKS = 8
+MPU6050_DMP_MEMORY_BANK_SIZE = 256
+MPU6050_DMP_MEMORY_CHUNK_SIZE = 16
 
 # note: DMP code memory blocks defined at end of header file
 
@@ -1739,8 +1739,8 @@ class MPU6050:
 
     def getSlave4Register(self):
         '''* Get the active internal register for the Slave 4.
-         * Read/write operations for self slave will be done to whatever internal
-         * register address is stored in self MPU register.
+         * Read/write operations for self slave will be done to whatever 
+         * internal register address is stored in self MPU register.
          *
          * @return Current active register for Slave 4
          * @see MPU6050_RA_I2C_SLV4_REG
@@ -1757,8 +1757,8 @@ class MPU6050:
 
     def setSlave4OutputByte(self, data):
         '''* Set byte to write to Slave 4.
-         * This register stores the data to be written into the Slave 4. If I2C_SLV4_RW
-         * is set 1 (set to read), register has no effect.
+         * This register stores the data to be written into the Slave 4. If
+         * I2C_SLV4_RW is set 1 (set to read), register has no effect.
          * @param data New byte to write to Slave 4
          * @see MPU6050_RA_I2C_SLV4_DO
          '''
@@ -1813,12 +1813,14 @@ class MPU6050:
 
     def getSlave4WriteMode(self):
         '''* Get write mode for Slave 4.
-         * When set to 1, transaction will read or write data only. When cleared to
-         * 0, transaction will write a register address prior to reading or writing
-         * data. This should equal 0 when specifying the register address within the
-         * Slave device to/from which the ensuing data transaction will take place.
+         * When set to 1, transaction will read or write data only. When cleared
+         * to 0, transaction will write a register address prior to reading or
+         * writing data. This should equal 0 when specifying the register
+         * address within the Slave device to/from which the ensuing data
+         * transaction will take place.
          *
-         * @return Current write mode for Slave 4 (0 = register address + data, 1 = data only)
+         * @return Current write mode for Slave 4 (0 = register address + data,\
+            1 = data only)
          * @see MPU6050_RA_I2C_SLV4_CTRL
          '''
         return self.readBit(self.devAddr,
@@ -1827,7 +1829,8 @@ class MPU6050:
 
     def setSlave4WriteMode(self, mode):
         '''* Set write mode for the Slave 4.
-         * @param mode New write mode for Slave 4 (0 = register address + data, 1 = data only)
+         * @param mode New write mode for Slave 4 (0 = register address + data,\
+            1 = data only)
          * @see getSlave4WriteMode()
          * @see MPU6050_RA_I2C_SLV4_CTRL
          '''
@@ -1838,16 +1841,17 @@ class MPU6050:
 
     def getSlave4MasterDelay(self):
         '''* Get Slave 4 master delay value.
-         * This configures the reduced access rate of I2C slaves relative to the Sample
-         * Rate. When a slave's access rate is decreased relative to the Sample Rate,
-         * the slave is accessed every:
+         * This configures the reduced access rate of I2C slaves relative to the
+         * Sample Rate. When a slave's access rate is decreased relative to the
+         * Sample Rate, the slave is accessed every:
          *
          *     1 / (1 + I2C_MST_DLY) samples
          *
-         * This base Sample Rate in turn is determined by SMPLRT_DIV (register 25) and
-         * DLPF_CFG (register 26). Whether a slave's access rate is reduced relative to
-         * the Sample Rate is determined by I2C_MST_DELAY_CTRL (register 103). For
-         * further information regarding the Sample Rate, refer to register 25.
+         * This base Sample Rate in turn is determined by SMPLRT_DIV
+         * (register 25) and DLPF_CFG (register 26). Whether a slave's access
+         * rate is reduced relative to the Sample Rate is determined by
+         * I2C_MST_DELAY_CTRL (register 103). For further information regarding
+         * the Sample Rate, refer to register 25.
          *
          * @return Current Slave 4 master delay value
          * @see MPU6050_RA_I2C_SLV4_CTRL
@@ -1871,8 +1875,8 @@ class MPU6050:
 
     def getSlate4InputByte(self):
         '''* Get last available byte read from Slave 4.
-         * This register stores the data read from Slave 4. This field is populated
-         * after a read transaction.
+         * This register stores the data read from Slave 4. This field is
+         * populated after a read transaction.
          * @return Last available byte read from to Slave 4
          * @see MPU6050_RA_I2C_SLV4_DI
          '''
@@ -1883,11 +1887,11 @@ class MPU6050:
 
     def getPassthroughStatus(self):
         '''* Get FSYNC interrupt status.
-         * This bit reflects the status of the FSYNC interrupt from an external device
-         * into the MPU-60X0. This is used as a way to pass an external interrupt
-         * through the MPU-60X0 to the host application processor. When set to 1, self
-         * bit will cause an interrupt if FSYNC_INT_EN is asserted in INT_PIN_CFG
-         * (Register 55).
+         * This bit reflects the status of the FSYNC interrupt from an external
+         * device into the MPU-60X0. This is used as a way to pass an external
+         * interrupt through the MPU-60X0 to the host application processor.
+         * When set to 1, self bit will cause an interrupt if FSYNC_INT_EN is
+         * asserted in INT_PIN_CFG (Register 55).
          * @return FSYNC interrupt status
          * @see MPU6050_RA_I2C_MST_STATUS
          '''
@@ -1897,10 +1901,11 @@ class MPU6050:
 
     def getSlave4IsDone(self):
         '''* Get Slave 4 transaction done status.
-         * Automatically sets to 1 when a Slave 4 transaction has completed. This
-         * triggers an interrupt if the I2C_MST_INT_EN bit in the INT_ENABLE register
-         * (Register 56) is asserted and if the SLV_4_DONE_INT bit is asserted in the
-         * I2C_SLV4_CTRL register (Register 52).
+         * Automatically sets to 1 when a Slave 4 transaction has completed.
+         * This triggers an interrupt if the I2C_MST_INT_EN bit in the
+         * INT_ENABLE register (Register 56) is asserted and if the
+         * SLV_4_DONE_INT bit is asserted in the I2C_SLV4_CTRL register
+         * (Register 52).
          * @return Slave 4 transaction done status
          * @see MPU6050_RA_I2C_MST_STATUS
          '''
@@ -1910,9 +1915,10 @@ class MPU6050:
 
     def getLostArbitration(self):
         '''* Get master arbitration lost status.
-         * This bit automatically sets to 1 when the I2C Master has lost arbitration of
-         * the auxiliary I2C bus (an error condition). This triggers an interrupt if the
-         * I2C_MST_INT_EN bit in the INT_ENABLE register (Register 56) is asserted.
+         * This bit automatically sets to 1 when the I2C Master has lost
+         * arbitration of the auxiliary I2C bus (an error condition). This
+         * triggers an interrupt if the I2C_MST_INT_EN bit in the INT_ENABLE
+         * register (Register 56) is asserted.
          * @return Master arbitration lost status
          * @see MPU6050_RA_I2C_MST_STATUS
          '''
@@ -1922,9 +1928,10 @@ class MPU6050:
 
     def getSlave4Nack(self):
         '''* Get Slave 4 NACK status.
-         * This bit automatically sets to 1 when the I2C Master receives a NACK in a
-         * transaction with Slave 4. This triggers an interrupt if the I2C_MST_INT_EN
-         * bit in the INT_ENABLE register (Register 56) is asserted.
+         * This bit automatically sets to 1 when the I2C Master receives a NACK
+         * in a transaction with Slave 4. This triggers an interrupt if the
+         * I2C_MST_INT_EN bit in the INT_ENABLE register (Register 56) is
+         * asserted.
          * @return Slave 4 NACK interrupt status
          * @see MPU6050_RA_I2C_MST_STATUS
          '''
@@ -3891,9 +3898,9 @@ def writeDMPConfigurationSet(self, *data, dataSize, useProgMem):    uint8_t *pro
             Serial.println(" found...");
             if special == 0x01:                # enable DMP-related interrupts
                 
-                #setIntZeroMotionEnabled(True)
-                #setIntFIFOBufferOverflowEnabled(True)
-                #setIntDMPEnabled(True)
+                # setIntZeroMotionEnabled(True)
+                # setIntFIFOBufferOverflowEnabled(True)
+                # setIntDMPEnabled(True)
                 self.bus.write_byte_data(devAddr, MPU6050_RA_INT_ENABLE, 0x32);  # single operation
 
                 success = True

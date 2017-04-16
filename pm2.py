@@ -9,7 +9,7 @@ PI_DEFAULT_BUS = 1
 
 
 class PM2:
-    '''Handle display''''
+    '''Handle display'''
 
     # Translation value from String to Display
     digits = {'': 0,
@@ -38,10 +38,10 @@ class PM2:
         self.bus.write_byte(self.defaultAddr, PM2_MODE_SET)
         self.clear()
         self.set_mode('normal')
-        self.rowing_frequency_display('00')
-        self.middle_display('000')
-        self.time_meters_display('0000')
-        self.multi_display('0000')
+        self.top_right('00')
+        self.middle('000')
+        self.top_left('0000')
+        self.bottom_left('0000')
 
     def write_bit(self, addr, position, value):
         '''write one bit to buffer
@@ -74,8 +74,8 @@ class PM2:
         '''
         if (mode == 'normal'):
             """Time, /500m, Distance"""
-            self.set_segment_colon_top_left(True)
-            self.set_segment_colon_top_right(False)
+            self.set_segment_colon_top_left(False)
+            self.set_segment_colon_top_right(True)
             self.set_segment_dp_top(False)
             self.set_segment_time_top(True)
             self.set_segment_meters_top(False)
@@ -102,8 +102,8 @@ class PM2:
             self.set_segment_dragfactor_bottom(False)
         elif (mode == 'watts'):
             """Time, Watts, Distance"""
-            self.set_segment_colon_top_left(True)
-            self.set_segment_colon_top_right(False)
+            self.set_segment_colon_top_left(False)
+            self.set_segment_colon_top_right(True)
             self.set_segment_dp_top(False)
             self.set_segment_time_top(True)
             self.set_segment_meters_top(False)
@@ -126,7 +126,7 @@ class PM2:
             self.set_segment_cal_bottom(False)
             self.set_segment_proj_bottom(False)
             self.set_segment_time_bottom(False)
-            self.set_segment_meters_bottom(True)
+            self.set_segment_meters_bottom(False)
             self.set_segment_dragfactor_bottom(False)
         elif (mode == 'heart rate'):
             self.set_segment_colon_middle(isHeartRate)
@@ -210,6 +210,10 @@ class PM2:
     def set_segment_proj_bottom(self, enabled):
         '''Set PROJ segment in the bottom'''
         self.write_bit(8, 4, enabled)
+
+    def set_segment_dp_bottom(self, enabled):
+        '''Set DP segment (decimal point) in the bottom'''
+        self.write_bit(6, 4, enabled)
 
     def set_segment_time_bottom(self, enabled):
         '''Set TIME segment in the bottom'''

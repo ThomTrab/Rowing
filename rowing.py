@@ -1,17 +1,22 @@
 #!/usr/bin/env python
 import time
 import math
-from threading import Timer, Event, Thread
+from threading import Timer
 import pm2
 
 class Chrono(object):
 
     diff_pause = 0
+    value = ''
 
-    def __init__(self, display, interval=1, *args, **kwargs):
+    def __init__(self, interval=1, *args, **kwargs):
+        ''' Initialize Timer
+        @param interval : refresh frequency in seconds
+        @self timer : timer call main function every self interval
+        @self is_runing : flag use to track Chrono execution
+        '''
         self._timer     = None
         self.interval   = interval
-        self.display    = display
         self.args       = args
         self.kwargs     = kwargs
         self.is_running = False
@@ -23,8 +28,7 @@ class Chrono(object):
         #self.function(*self.args, **self.kwargs)
         self.diff = int(round((time.time() - self.start_time))) + self.diff_pause
         mins, secs = divmod(self.diff, 60)
-        timeformat = '{:02d}{:02d}'.format(mins, secs)
-        self.display.multi_display(value = timeformat)
+        self.value = '{:02d}{:02d}'.format(mins, secs)
 
     def loop(self):
         if not self.is_running:
@@ -49,7 +53,7 @@ class Chrono(object):
 
 def main():
     PM2 = pm2.PM2()
-    timer = Chrono(display=PM2)
+    timer = Chrono()
     input = raw_input('Command:')
     while input != 'q':
         if input == 'start':
