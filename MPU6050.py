@@ -444,7 +444,7 @@ class MPU6050:
             buffer.append(self.bus.read_byte_data(devAddr, regAddr + i))
         return buffer
 
-    def writeBit(self.devAddr, regAddr, bitNum, data):
+    def writeBit(self, devAddr, regAddr, bitNum, data):
         '''* write a single bit in an 8-bit device register.
          * @param devAddr I2C slave device address
          * @param regAddr Register regAddr to write to
@@ -472,8 +472,9 @@ class MPU6050:
         # 10101111 original value (sample)
         # 10100011 original & ~mask
         # 10101011 masked | value
-        if ((b=self.bus.read_byte_data(devAddr, regAddr)) != 0):
-            uint8_t mask = ((1 << length) - 1) << (bitStart - length + 1)
+        b = self.bus.read_byte_data(devAddr, regAddr)
+        if ( b != 0):
+            mask = ((1 << length) - 1) << (bitStart - length + 1)
             data <<= (bitStart - length + 1)  # shift data into correct position
             data &= mask  # zero all non-important bits in data
             b &= ~(mask)  # zero all important bits in existing byte
@@ -505,14 +506,14 @@ class MPU6050:
 
 # AUX_VDDIO register (InvenSense demo code calls this RA_*G_OFFS_TC)
 
-    def getAuxVDDIOLevel:
+    def getAuxVDDIOLevel(self):
         '''* Get the auxiliary I2C supply voltage level.
          * When set to 1, auxiliary I2C bus high logic level is VDD. When
          * cleared to 0, auxiliary I2C bus high logic level is VLOGIC. This
          * does not apply to the MPU-6000, does not have a VLOGIC pin.
          * @return I2C supply voltage level (0=VLOGIC, 1=VDD)
          '''
-        return self.readBit(devAddr,
+        return self.readBit(self.devAddr,
                             MPU6050_RA_YG_OFFS_TC,
                             MPU6050_TC_PWR_MODE_BIT)
 
@@ -523,7 +524,7 @@ class MPU6050:
          * does not apply to the MPU-6000, does not have a VLOGIC pin.
          * @param level I2C supply voltage level (0=VLOGIC, 1=VDD)
          '''
-        self.writeBit(devAddr,
+        self.writeBit(self.devAddr,
                       MPU6050_RA_YG_OFFS_TC,
                       MPU6050_TC_PWR_MODE_BIT,
                       level)
@@ -553,7 +554,7 @@ class MPU6050:
          * @return Current sample rate
          * @see MPU6050_RA_SMPLRT_DIV
          '''
-        return self.bus.read_byte_data(devAddr, MPU6050_RA_SMPLRT_DIV)
+        return self.bus.read_byte_data(self.devAddr, MPU6050_RA_SMPLRT_DIV)
 
     def setRate(self, rate):
         '''* Set gyroscope sample rate divider.
@@ -561,7 +562,7 @@ class MPU6050:
          * @see getRate()
          * @see MPU6050_RA_SMPLRT_DIV
          '''
-        self.bus.write_byte_data(devAddr, MPU6050_RA_SMPLRT_DIV, rate)
+        self.bus.write_byte_data(self.devAddr, MPU6050_RA_SMPLRT_DIV, rate)
 
 
 # CONFIG register
@@ -595,7 +596,7 @@ class MPU6050:
          * @return FSYNC configuration value
          '''
 
-        return self.readBits(devAddr,
+        return self.readBits(self.devAddr,
                              MPU6050_RA_CONFIG,
                              MPU6050_CFG_EXT_SYNC_SET_BIT,
                              MPU6050_CFG_EXT_SYNC_SET_LENGTH)
@@ -606,7 +607,7 @@ class MPU6050:
          * @see MPU6050_RA_CONFIG
          * @param sync New FSYNC configuration value
          '''
-        self.writeBits(devAddr,
+        self.writeBits(self.devAddr,
                        MPU6050_RA_CONFIG,
                        MPU6050_CFG_EXT_SYNC_SET_BIT,
                        MPU6050_CFG_EXT_SYNC_SET_LENGTH,
@@ -641,7 +642,7 @@ class MPU6050:
          * @see MPU6050_CFG_DLPF_CFG_BIT
          * @see MPU6050_CFG_DLPF_CFG_LENGTH
          '''
-        return self.readBits(devAddr,
+        return self.readBits(self.devAddr,
                              MPU6050_RA_CONFIG,
                              MPU6050_CFG_DLPF_CFG_BIT,
                              MPU6050_CFG_DLPF_CFG_LENGTH)
@@ -655,7 +656,7 @@ class MPU6050:
          * @see MPU6050_CFG_DLPF_CFG_BIT
          * @see MPU6050_CFG_DLPF_CFG_LENGTH
          '''
-        self.writeBits(devAddr,
+        self.writeBits(self.devAddr,
                        MPU6050_RA_CONFIG,
                        MPU6050_CFG_DLPF_CFG_BIT,
                        MPU6050_CFG_DLPF_CFG_LENGTH,
@@ -682,7 +683,7 @@ class MPU6050:
          * @see MPU6050_GCONFIG_FS_SEL_BIT
          * @see MPU6050_GCONFIG_FS_SEL_LENGTH
          '''
-        return self.readBits(devAddr,
+        return self.readBits(self.devAddr,
                              MPU6050_RA_GYRO_CONFIG,
                              MPU6050_GCONFIG_FS_SEL_BIT,
                              MPU6050_GCONFIG_FS_SEL_LENGTH)
@@ -696,7 +697,7 @@ class MPU6050:
          * @see MPU6050_GCONFIG_FS_SEL_BIT
          * @see MPU6050_GCONFIG_FS_SEL_LENGTH
          '''
-        self.writeBits(devAddr,
+        self.writeBits(self.devAddr,
                        MPU6050_RA_GYRO_CONFIG,
                        MPU6050_GCONFIG_FS_SEL_BIT,
                        MPU6050_GCONFIG_FS_SEL_LENGTH,
@@ -709,8 +710,8 @@ class MPU6050:
          * @return factory trim value
          * @see MPU6050_RA_SELF_TEST_X
          '''
-        buffer[0] = self.bus.read_byte_data(devAddr, MPU6050_RA_SELF_TEST_X)
-        buffer[1] = self.bus.read_byte_data(devAddr, MPU6050_RA_SELF_TEST_A)
+        buffer[0] = self.bus.read_byte_data(self.devAddr, MPU6050_RA_SELF_TEST_X)
+        buffer[1] = self.bus.read_byte_data(self.devAddr, MPU6050_RA_SELF_TEST_A)
         return (buffer[0] >> 3) | ((buffer[1] >> 4) & 0x03)
 
     def getAccelYSelfTestFactoryTrim(self):
@@ -718,8 +719,8 @@ class MPU6050:
          * @return factory trim value
          * @see MPU6050_RA_SELF_TEST_Y
          '''
-        buffer[0] = self.bus.read_byte_data(devAddr, MPU6050_RA_SELF_TEST_Y)
-        buffer[1] = self.bus.read_byte_data(devAddr, MPU6050_RA_SELF_TEST_A)
+        buffer[0] = self.bus.read_byte_data(self.devAddr, MPU6050_RA_SELF_TEST_Y)
+        buffer[1] = self.bus.read_byte_data(self.devAddr, MPU6050_RA_SELF_TEST_A)
         return (buffer[0] >> 3) | ((buffer[1] >> 2) & 0x03)
 
     def getAccelZSelfTestFactoryTrim(self):
@@ -727,7 +728,7 @@ class MPU6050:
          * @return factory trim value
          * @see MPU6050_RA_SELF_TEST_Z
          '''
-        buffer = self.readBytes(devAddr, MPU6050_RA_SELF_TEST_Z, 2)
+        buffer = self.readBytes(self.devAddr, MPU6050_RA_SELF_TEST_Z, 2)
         return (buffer[0] >> 3) | (buffer[1] & 0x03)
 
     def getGyroXSelfTestFactoryTrim(self):
@@ -735,7 +736,7 @@ class MPU6050:
          * @return factory trim value
          * @see MPU6050_RA_SELF_TEST_X
          '''
-        buffer = self.bus.read_byte_data(devAddr, MPU6050_RA_SELF_TEST_X)
+        buffer = self.bus.read_byte_data(self.devAddr, MPU6050_RA_SELF_TEST_X)
         return (buffer & 0x1F)
 
     def getGyroYSelfTestFactoryTrim(self):
@@ -743,7 +744,7 @@ class MPU6050:
          * @return factory trim value
          * @see MPU6050_RA_SELF_TEST_Y
          '''
-        buffer = self.bus.read_byte_data(devAddr, MPU6050_RA_SELF_TEST_Y)
+        buffer = self.bus.read_byte_data(self.devAddr, MPU6050_RA_SELF_TEST_Y)
         return (buffer & 0x1F)
 
     def getGyroZSelfTestFactoryTrim(self):
@@ -751,7 +752,7 @@ class MPU6050:
          * @return factory trim value
          * @see MPU6050_RA_SELF_TEST_Z
          '''
-        buffer = self.bus.read_byte_data(devAddr, MPU6050_RA_SELF_TEST_Z)
+        buffer = self.bus.read_byte_data(self.devAddr, MPU6050_RA_SELF_TEST_Z)
         return (buffer & 0x1F)
 
 
@@ -762,7 +763,7 @@ class MPU6050:
          * @return Self-test enabled value
          * @see MPU6050_RA_ACCEL_CONFIG
          '''
-        return self.readBit(devAddr,
+        return self.readBit(self.devAddr,
                             MPU6050_RA_ACCEL_CONFIG,
                             MPU6050_ACONFIG_XA_ST_BIT)
 
@@ -771,7 +772,7 @@ class MPU6050:
          * @param enabled Self-test enabled value
          * @see MPU6050_RA_ACCEL_CONFIG
          '''
-        self.writeBit(devAddr,
+        self.writeBit(self.devAddr,
                       MPU6050_RA_ACCEL_CONFIG,
                       MPU6050_ACONFIG_XA_ST_BIT,
                       enabled)
@@ -781,7 +782,7 @@ class MPU6050:
          * @return Self-test enabled value
          * @see MPU6050_RA_ACCEL_CONFIG
          '''
-        return self.readBit(devAddr,
+        return self.readBit(self.devAddr,
                             MPU6050_RA_ACCEL_CONFIG,
                             MPU6050_ACONFIG_YA_ST_BIT)
 
@@ -790,7 +791,7 @@ class MPU6050:
          * @param enabled Self-test enabled value
          * @see MPU6050_RA_ACCEL_CONFIG
          '''
-        self.writeBit(devAddr,
+        self.writeBit(self.devAddr,
                       MPU6050_RA_ACCEL_CONFIG,
                       MPU6050_ACONFIG_YA_ST_BIT,
                       enabled)
@@ -800,7 +801,7 @@ class MPU6050:
          * @return Self-test enabled value
          * @see MPU6050_RA_ACCEL_CONFIG
          '''
-        return self.readBit(devAddr,
+        return self.readBit(self.devAddr,
                             MPU6050_RA_ACCEL_CONFIG,
                             MPU6050_ACONFIG_ZA_ST_BIT)
 
@@ -809,7 +810,7 @@ class MPU6050:
          * @param enabled Self-test enabled value
          * @see MPU6050_RA_ACCEL_CONFIG
          '''
-        self.writeBit(devAddr,
+        self.writeBit(self.devAddr,
                       MPU6050_RA_ACCEL_CONFIG,
                       MPU6050_ACONFIG_ZA_ST_BIT,
                       enabled)
@@ -832,7 +833,7 @@ class MPU6050:
          * @see MPU6050_ACONFIG_AFS_SEL_BIT
          * @see MPU6050_ACONFIG_AFS_SEL_LENGTH
          '''
-        return self.readBits(devAddr,
+        return self.readBits(self.devAddr,
                              MPU6050_RA_ACCEL_CONFIG,
                              MPU6050_ACONFIG_AFS_SEL_BIT,
                              MPU6050_ACONFIG_AFS_SEL_LENGTH)
@@ -842,7 +843,7 @@ class MPU6050:
          * @param range New full-scale accelerometer range setting
          * @see getFullScaleAccelRange()
         '''
-        self.writeBits(devAddr,
+        self.writeBits(self.devAddr,
                        MPU6050_RA_ACCEL_CONFIG,
                        MPU6050_ACONFIG_AFS_SEL_BIT,
                        MPU6050_ACONFIG_AFS_SEL_LENGTH,
@@ -885,7 +886,7 @@ class MPU6050:
          * @see MPU6050_DHPF_RESET
          * @see MPU6050_RA_ACCEL_CONFIG
         '''
-        return self.readBits(devAddr,
+        return self.readBits(self.devAddr,
                              MPU6050_RA_ACCEL_CONFIG,
                              MPU6050_ACONFIG_ACCEL_HPF_BIT,
                              MPU6050_ACONFIG_ACCEL_HPF_LENGTH)
@@ -897,7 +898,7 @@ class MPU6050:
          * @see MPU6050_DHPF_RESET
          * @see MPU6050_RA_ACCEL_CONFIG
         '''
-        self.writeBits(devAddr,
+        self.writeBits(self.devAddr,
                        MPU6050_RA_ACCEL_CONFIG,
                        MPU6050_ACONFIG_ACCEL_HPF_BIT,
                        MPU6050_ACONFIG_ACCEL_HPF_LENGTH,
@@ -922,7 +923,7 @@ class MPU6050:
          * @return Current free-fall acceleration threshold value (LSB = 2mg)
          * @see MPU6050_RA_FF_THR
          '''
-        return self.bus.read_byte_data(devAddr, MPU6050_RA_FF_THR)
+        return self.bus.read_byte_data(self.devAddr, MPU6050_RA_FF_THR)
 
     def setFreefallDetectionThreshold(self, threshold):
         '''* Get free-fall event acceleration threshold.
@@ -931,7 +932,7 @@ class MPU6050:
          * @see getFreefallDetectionThreshold()
          * @see MPU6050_RA_FF_THR
          '''
-        self.bus.write_byte_data(devAddr, MPU6050_RA_FF_THR, threshold)
+        self.bus.write_byte_data(self.devAddr, MPU6050_RA_FF_THR, threshold)
 
 # FF_DUR register
 
@@ -954,7 +955,7 @@ class MPU6050:
          * @return Current free-fall duration threshold value (LSB = 1ms)
          * @see MPU6050_RA_FF_DUR
          '''
-        return self.bus.read_byte_data(devAddr, MPU6050_RA_FF_DUR)
+        return self.bus.read_byte_data(self.devAddr, MPU6050_RA_FF_DUR)
 
     def setFreefallDetectionDuration(self, duration):
         '''* Get free-fall event duration threshold.
@@ -962,7 +963,7 @@ class MPU6050:
          * @see getFreefallDetectionDuration()
          * @see MPU6050_RA_FF_DUR
          '''
-        self.bus.write_byte_data(devAddr, MPU6050_RA_FF_DUR, duration)
+        self.bus.write_byte_data(self.devAddr, MPU6050_RA_FF_DUR, duration)
 
 
 # MOT_THR register
@@ -988,7 +989,7 @@ class MPU6050:
            (LSB = 2mg)
          * @see MPU6050_RA_MOT_THR
          '''
-        return self.bus.read_byte_data(devAddr, MPU6050_RA_MOT_THR)
+        return self.bus.read_byte_data(self.devAddr, MPU6050_RA_MOT_THR)
 
     def setMotionDetectionThreshold(self, threshold):
         '''* Set motion detection event acceleration threshold.
@@ -997,7 +998,7 @@ class MPU6050:
          * @see getMotionDetectionThreshold()
          * @see MPU6050_RA_MOT_THR
          '''
-        self.bus.write_byte_data(devAddr, MPU6050_RA_MOT_THR, threshold)
+        self.bus.write_byte_data(self.devAddr, MPU6050_RA_MOT_THR, threshold)
 
 
 # MOT_DUR register
@@ -1019,7 +1020,7 @@ class MPU6050:
            (LSB = 1ms)
          * @see MPU6050_RA_MOT_DUR
          '''
-        return self.bus.read_byte_data(devAddr, MPU6050_RA_MOT_DUR)
+        return self.bus.read_byte_data(self.devAddr, MPU6050_RA_MOT_DUR)
 
     def setMotionDetectionDuration(self, duration):
         '''* Set motion detection event duration threshold.
@@ -1028,7 +1029,7 @@ class MPU6050:
          * @see getMotionDetectionDuration()
          * @see MPU6050_RA_MOT_DUR
          '''
-        self.bus.write_byte_data(devAddr, MPU6050_RA_MOT_DUR, duration)
+        self.bus.write_byte_data(self.devAddr, MPU6050_RA_MOT_DUR, duration)
 
 
 # ZRMOT_THR register
@@ -1062,7 +1063,7 @@ class MPU6050:
            (LSB = 2mg)
          * @see MPU6050_RA_ZRMOT_THR
          '''
-        return self.bus.read_byte_data(devAddr, MPU6050_RA_ZRMOT_THR)
+        return self.bus.read_byte_data(self.devAddr, MPU6050_RA_ZRMOT_THR)
 
     def setZeroMotionDetectionThreshold(self, threshold):
         '''* Set zero motion detection event acceleration threshold.
@@ -1071,7 +1072,7 @@ class MPU6050:
          * @see getZeroMotionDetectionThreshold()
          * @see MPU6050_RA_ZRMOT_THR
          '''
-        self.bus.write_byte_data(devAddr, MPU6050_RA_ZRMOT_THR, threshold)
+        self.bus.write_byte_data(self.devAddr, MPU6050_RA_ZRMOT_THR, threshold)
 
 
 # ZRMOT_DUR register
@@ -1095,7 +1096,7 @@ class MPU6050:
            (LSB = 64ms)
          * @see MPU6050_RA_ZRMOT_DUR
          '''
-        return self.bus.read_byte_data(devAddr, MPU6050_RA_ZRMOT_DUR)
+        return self.bus.read_byte_data(self.devAddr, MPU6050_RA_ZRMOT_DUR)
 
     def setZeroMotionDetectionDuration(self, duration):
         '''* Set zero motion detection event duration threshold.
@@ -1104,7 +1105,7 @@ class MPU6050:
          * @see getZeroMotionDetectionDuration()
          * @see MPU6050_RA_ZRMOT_DUR
          '''
-        self.bus.write_byte_data(devAddr, MPU6050_RA_ZRMOT_DUR, duration)
+        self.bus.write_byte_data(self.devAddr, MPU6050_RA_ZRMOT_DUR, duration)
 
 # FIFO_EN register
 
@@ -1115,7 +1116,7 @@ class MPU6050:
          * @return Current temperature FIFO enabled value
          * @see MPU6050_RA_FIFO_EN
          '''
-        return self.readBit(devAddr,
+        return self.readBit(self.devAddr,
                             MPU6050_RA_FIFO_EN,
                             MPU6050_TEMP_FIFO_EN_BIT)
 
@@ -1125,7 +1126,7 @@ class MPU6050:
          * @see getTempFIFOEnabled()
          * @see MPU6050_RA_FIFO_EN
         '''
-        self.writeBit(devAddr,
+        self.writeBit(self.devAddr,
                       MPU6050_RA_FIFO_EN,
                       MPU6050_TEMP_FIFO_EN_BIT,
                       enabled)
@@ -1137,7 +1138,7 @@ class MPU6050:
          * @return Current gyroscope X-axis FIFO enabled value
          * @see MPU6050_RA_FIFO_EN
          '''
-        return self.readBit(devAddr,
+        return self.readBit(self.devAddr,
                             MPU6050_RA_FIFO_EN,
                             MPU6050_XG_FIFO_EN_BIT,
                             buffer)
@@ -1148,7 +1149,7 @@ class MPU6050:
          * @see getXGyroFIFOEnabled()
          * @see MPU6050_RA_FIFO_EN
          '''
-        self.writeBit(devAddr,
+        self.writeBit(self.devAddr,
                       MPU6050_RA_FIFO_EN,
                       MPU6050_XG_FIFO_EN_BIT,
                       enabled)
@@ -1160,7 +1161,7 @@ class MPU6050:
          * @return Current gyroscope Y-axis FIFO enabled value
          * @see MPU6050_RA_FIFO_EN
          '''
-        return self.readBit(devAddr,
+        return self.readBit(self.devAddr,
                             MPU6050_RA_FIFO_EN,
                             MPU6050_YG_FIFO_EN_BIT)
 
@@ -1170,7 +1171,7 @@ class MPU6050:
          * @see getYGyroFIFOEnabled()
          * @see MPU6050_RA_FIFO_EN
          '''
-        self.writeBit(devAddr,
+        self.writeBit(self.devAddr,
                       MPU6050_RA_FIFO_EN,
                       MPU6050_YG_FIFO_EN_BIT,
                       enabled)
@@ -1182,7 +1183,7 @@ class MPU6050:
          * @return Current gyroscope Z-axis FIFO enabled value
          * @see MPU6050_RA_FIFO_EN
          '''
-        return self.readBit(devAddr,
+        return self.readBit(self.devAddr,
                             MPU6050_RA_FIFO_EN,
                             MPU6050_ZG_FIFO_EN_BIT)
 
@@ -1192,7 +1193,7 @@ class MPU6050:
          * @see getZGyroFIFOEnabled()
          * @see MPU6050_RA_FIFO_EN
          '''
-        self.writeBit(devAddr,
+        self.writeBit(self.devAddr,
                       MPU6050_RA_FIFO_EN,
                       MPU6050_ZG_FIFO_EN_BIT,
                       enabled)
@@ -1205,7 +1206,7 @@ class MPU6050:
          * @return Current accelerometer FIFO enabled value
          * @see MPU6050_RA_FIFO_EN
          '''
-        return self.readBit(devAddr,
+        return self.readBit(self.devAddr,
                             MPU6050_RA_FIFO_EN,
                             MPU6050_ACCEL_FIFO_EN_BIT)
 
@@ -1215,7 +1216,7 @@ class MPU6050:
          * @see getAccelFIFOEnabled()
          * @see MPU6050_RA_FIFO_EN
          '''
-        self.writeBit(devAddr,
+        self.writeBit(self.devAddr,
                       MPU6050_RA_FIFO_EN,
                       MPU6050_ACCEL_FIFO_EN_BIT,
                       enabled)
@@ -1227,7 +1228,7 @@ class MPU6050:
          * @return Current Slave 2 FIFO enabled value
          * @see MPU6050_RA_FIFO_EN
          '''
-        return self.readBit(devAddr,
+        return self.readBit(self.devAddr,
                             MPU6050_RA_FIFO_EN,
                             MPU6050_SLV2_FIFO_EN_BIT)
 
@@ -1237,7 +1238,7 @@ class MPU6050:
          * @see getSlave2FIFOEnabled()
          * @see MPU6050_RA_FIFO_EN
          '''
-        self.writeBit(devAddr,
+        self.writeBit(self.devAddr,
                       MPU6050_RA_FIFO_EN,
                       MPU6050_SLV2_FIFO_EN_BIT,
                       enabled)
@@ -1249,7 +1250,7 @@ class MPU6050:
          * @return Current Slave 1 FIFO enabled value
          * @see MPU6050_RA_FIFO_EN
          '''
-        return self.readBit(devAddr,
+        return self.readBit(self.devAddr,
                             MPU6050_RA_FIFO_EN,
                             MPU6050_SLV1_FIFO_EN_BIT)
 
@@ -1259,7 +1260,7 @@ class MPU6050:
          * @see getSlave1FIFOEnabled()
          * @see MPU6050_RA_FIFO_EN
          '''
-        self.writeBit(devAddr,
+        self.writeBit(self.devAddr,
                       MPU6050_RA_FIFO_EN,
                       MPU6050_SLV1_FIFO_EN_BIT,
                       enabled)
@@ -1271,7 +1272,7 @@ class MPU6050:
          * @return Current Slave 0 FIFO enabled value
          * @see MPU6050_RA_FIFO_EN
          '''
-        return self.readBit(devAddr,
+        return self.readBit(self.devAddr,
                             MPU6050_RA_FIFO_EN,
                             MPU6050_SLV0_FIFO_EN_BIT)
 
@@ -1281,7 +1282,7 @@ class MPU6050:
          * @see getSlave0FIFOEnabled()
          * @see MPU6050_RA_FIFO_EN
          '''
-        self.writeBit(devAddr,
+        self.writeBit(self.devAddr,
                       MPU6050_RA_FIFO_EN,
                       MPU6050_SLV0_FIFO_EN_BIT,
                       enabled)
@@ -1306,7 +1307,7 @@ class MPU6050:
          * @return Current multi-master enabled value
          * @see MPU6050_RA_I2C_MST_CTRL
          '''
-        return self.readBit(devAddr,
+        return self.readBit(self.devAddr,
                             MPU6050_RA_I2C_MST_CTRL,
                             MPU6050_MULT_MST_EN_BIT)
 
@@ -1316,7 +1317,7 @@ class MPU6050:
          * @see getMultiMasterEnabled()
          * @see MPU6050_RA_I2C_MST_CTRL
          '''
-        self.writeBit(devAddr,
+        self.writeBit(self.devAddr,
                       MPU6050_RA_I2C_MST_CTRL,
                       MPU6050_MULT_MST_EN_BIT,
                       enabled)
@@ -1333,7 +1334,7 @@ class MPU6050:
          * @return Current wait-for-external-sensor-data enabled value
          * @see MPU6050_RA_I2C_MST_CTRL
          '''
-        return self.readBit(devAddr,
+        return self.readBit(self.devAddr,
                             MPU6050_RA_I2C_MST_CTRL,
                             MPU6050_WAIT_FOR_ES_BIT)
 
@@ -1343,7 +1344,7 @@ class MPU6050:
          * @see getWaitForExternalSensorEnabled()
          * @see MPU6050_RA_I2C_MST_CTRL
          '''
-        self.writeBit(devAddr,
+        self.writeBit(self.devAddr,
                       MPU6050_RA_I2C_MST_CTRL,
                       MPU6050_WAIT_FOR_ES_BIT,
                       enabled)
@@ -1355,7 +1356,7 @@ class MPU6050:
          * @return Current Slave 3 FIFO enabled value
          * @see MPU6050_RA_MST_CTRL
          '''
-        return self.readBit(devAddr,
+        return self.readBit(self.devAddr,
                             MPU6050_RA_I2C_MST_CTRL,
                             MPU6050_SLV_3_FIFO_EN_BIT)
 
@@ -1365,7 +1366,7 @@ class MPU6050:
          * @see getSlave3FIFOEnabled()
          * @see MPU6050_RA_MST_CTRL
          '''
-        self.writeBit(devAddr,
+        self.writeBit(self.devAddr,
                       MPU6050_RA_I2C_MST_CTRL,
                       MPU6050_SLV_3_FIFO_EN_BIT,
                       enabled)
@@ -1382,7 +1383,7 @@ class MPU6050:
          * @return Current slave read/write transition enabled value
          * @see MPU6050_RA_I2C_MST_CTRL
          '''
-        return self.readBit(devAddr,
+        return self.readBit(self.devAddr,
                             MPU6050_RA_I2C_MST_CTRL,
                             MPU6050_I2C_MST_P_NSR_BIT)
 
@@ -1392,7 +1393,7 @@ class MPU6050:
          * @see getSlaveReadWriteTransitionEnabled()
          * @see MPU6050_RA_I2C_MST_CTRL
          '''
-        self.writeBit(devAddr,
+        self.writeBit(self.devAddr,
                       MPU6050_RA_I2C_MST_CTRL,
                       MPU6050_I2C_MST_P_NSR_BIT,
                       enabled)
@@ -1427,7 +1428,7 @@ class MPU6050:
          * @return Current I2C master clock speed
          * @see MPU6050_RA_I2C_MST_CTRL
          '''
-        return self.readBits(devAddr,
+        return self.readBits(self.devAddr,
                              MPU6050_RA_I2C_MST_CTRL,
                              MPU6050_I2C_MST_CLK_BIT,
                              MPU6050_I2C_MST_CLK_LENGTH)
@@ -1437,7 +1438,7 @@ class MPU6050:
          * @reparam speed Current I2C master clock speed
          * @see MPU6050_RA_I2C_MST_CTRL
          '''
-        self.writeBits(devAddr,
+        self.writeBits(self.devAddr,
                        MPU6050_RA_I2C_MST_CTRL,
                        MPU6050_I2C_MST_CLK_BIT,
                        MPU6050_I2C_MST_CLK_LENGTH,
@@ -1493,7 +1494,7 @@ class MPU6050:
         if (num > 3):
             return 0
         else:
-            return self.bus.read_byte_data(devAddr,
+            return self.bus.read_byte_data(self.devAddr,
                                            MPU6050_RA_I2C_SLV0_ADDR + num * 3)
 
     def setSlaveAddress(self, num, address):
@@ -1506,7 +1507,7 @@ class MPU6050:
         if (num > 3):
             return
         else:
-            self.bus.write_byte_data(devAddr,
+            self.bus.write_byte_data(self.devAddr,
                                      MPU6050_RA_I2C_SLV0_ADDR + num * 3,
                                      address)
 
@@ -1525,7 +1526,7 @@ class MPU6050:
         if (num > 3):
             return 0
         else:
-            return self.bus.read_byte_data(devAddr,
+            return self.bus.read_byte_data(self.devAddr,
                                            MPU6050_RA_I2C_SLV0_REG + num * 3)
 
     def setSlaveRegister(self, num, reg):
@@ -1538,7 +1539,7 @@ class MPU6050:
         if (num > 3):
             return
         else:
-            self.bus.write_byte_data(devAddr,
+            self.bus.write_byte_data(self.devAddr,
                                      MPU6050_RA_I2C_SLV0_REG + num * 3,
                                      reg)
 
@@ -1554,7 +1555,7 @@ class MPU6050:
         if (num > 3):
             return 0
         else:
-            return self.readBit(devAddr,
+            return self.readBit(self.devAddr,
                                 MPU6050_RA_I2C_SLV0_CTRL + num * 3,
                                 MPU6050_I2C_SLV_EN_BIT)
 
@@ -1568,7 +1569,7 @@ class MPU6050:
         if (num > 3):
             return
         else:
-            self.writeBit(devAddr,
+            self.writeBit(self.devAddr,
                           MPU6050_RA_I2C_SLV0_CTRL + num * 3,
                           MPU6050_I2C_SLV_EN_BIT,
                           enabled)
@@ -1590,7 +1591,7 @@ class MPU6050:
         if (num > 3):
             return 0
         else:
-            return self.readBit(devAddr,
+            return self.readBit(self.devAddr,
                                 MPU6050_RA_I2C_SLV0_CTRL + num * 3,
                                 MPU6050_I2C_SLV_BYTE_SW_BIT)
 
@@ -1605,7 +1606,7 @@ class MPU6050:
         if (num > 3):
             return
         else:
-            self.writeBit(devAddr,
+            self.writeBit(self.devAddr,
                           MPU6050_RA_I2C_SLV0_CTRL + num * 3,
                           MPU6050_I2C_SLV_BYTE_SW_BIT,
                           enabled)
@@ -1626,7 +1627,7 @@ class MPU6050:
         if (num > 3):
             return 0
         else:
-            return self.readBit(devAddr,
+            return self.readBit(self.devAddr,
                                 MPU6050_RA_I2C_SLV0_CTRL + num * 3,
                                 MPU6050_I2C_SLV_REG_DIS_BIT)
 
@@ -1641,7 +1642,7 @@ class MPU6050:
         if (num > 3):
             return
         else:
-            self.writeBit(devAddr,
+            self.writeBit(self.devAddr,
                           MPU6050_RA_I2C_SLV0_CTRL + num * 3,
                           MPU6050_I2C_SLV_REG_DIS_BIT,
                           mode)
@@ -1662,7 +1663,7 @@ class MPU6050:
         if (num > 3):
             return 0
         else:
-            return self.readBit(devAddr,
+            return self.readBit(self.devAddr,
                                 MPU6050_RA_I2C_SLV0_CTRL + num * 3,
                                 MPU6050_I2C_SLV_GRP_BIT)
 
@@ -1677,7 +1678,7 @@ class MPU6050:
         if (num > 3):
             return
         else:
-            self.writeBit(devAddr,
+            self.writeBit(self.devAddr,
                           MPU6050_RA_I2C_SLV0_CTRL + num * 3,
                           MPU6050_I2C_SLV_GRP_BIT,
                           enabled)
@@ -1694,7 +1695,7 @@ class MPU6050:
         if (num > 3):
             return 0
         else:
-            return self.readBits(devAddr,
+            return self.readBits(self.devAddr,
                                  MPU6050_RA_I2C_SLV0_CTRL + num * 3,
                                  MPU6050_I2C_SLV_LEN_BIT,
                                  MPU6050_I2C_SLV_LEN_LENGTH)
@@ -1707,7 +1708,7 @@ class MPU6050:
          * @see MPU6050_RA_I2C_SLV0_CTRL
          '''
         if (num > 3): return
-        self.writeBits(devAddr,
+        self.writeBits(self.devAddr,
                        MPU6050_RA_I2C_SLV0_CTRL + num*3,
                        MPU6050_I2C_SLV_LEN_BIT,
                        MPU6050_I2C_SLV_LEN_LENGTH,
@@ -1726,7 +1727,7 @@ class MPU6050:
          * @see getSlaveAddress()
          * @see MPU6050_RA_I2C_SLV4_ADDR
          '''
-        self.bus.read_byte_data(devAddr, MPU6050_RA_I2C_SLV4_ADDR)
+        self.bus.read_byte_data(self.devAddr, MPU6050_RA_I2C_SLV4_ADDR)
 
     def setSlave4Address(self, address):
         '''* Set the I2C address of Slave 4.
@@ -1734,7 +1735,7 @@ class MPU6050:
          * @see getSlave4Address()
          * @see MPU6050_RA_I2C_SLV4_ADDR
          '''
-        self.bus.write_byte_data(devAddr, MPU6050_RA_I2C_SLV4_ADDR, address)
+        self.bus.write_byte_data(self.devAddr, MPU6050_RA_I2C_SLV4_ADDR, address)
 
     def getSlave4Register(self):
         '''* Get the active internal register for the Slave 4.
@@ -1744,7 +1745,7 @@ class MPU6050:
          * @return Current active register for Slave 4
          * @see MPU6050_RA_I2C_SLV4_REG
          '''
-        return self.bus.read_byte_data(devAddr, MPU6050_RA_I2C_SLV4_REG)
+        return self.bus.read_byte_data(self.devAddr, MPU6050_RA_I2C_SLV4_REG)
 
     def setSlave4Register(self, reg):
         '''* Set the active internal register for Slave 4.
@@ -1752,7 +1753,7 @@ class MPU6050:
          * @see getSlave4Register()
          * @see MPU6050_RA_I2C_SLV4_REG
          '''
-        self.bus.write_byte_data(devAddr, MPU6050_RA_I2C_SLV4_REG, reg)
+        self.bus.write_byte_data(self.devAddr, MPU6050_RA_I2C_SLV4_REG, reg)
 
     def setSlave4OutputByte(self, data):
         '''* Set byte to write to Slave 4.
@@ -1761,7 +1762,7 @@ class MPU6050:
          * @param data New byte to write to Slave 4
          * @see MPU6050_RA_I2C_SLV4_DO
          '''
-        self.bus.write_byte_data(devAddr, MPU6050_RA_I2C_SLV4_DO, data)
+        self.bus.write_byte_data(self.devAddr, MPU6050_RA_I2C_SLV4_DO, data)
 
     def getSlave4Enabled(self):
         '''* Get the enabled value for the Slave 4.
@@ -1770,7 +1771,7 @@ class MPU6050:
          * @return Current enabled value for Slave 4
          * @see MPU6050_RA_I2C_SLV4_CTRL
         '''
-        return self.readBit(devAddr,
+        return self.readBit(self.devAddr,
                             MPU6050_RA_I2C_SLV4_CTRL,
                             MPU6050_I2C_SLV4_EN_BIT)
 
@@ -1780,22 +1781,22 @@ class MPU6050:
          * @see getSlave4Enabled()
          * @see MPU6050_RA_I2C_SLV4_CTRL
          '''
-        self.writeBit(devAddr,
+        self.writeBit(self.devAddr,
                       MPU6050_RA_I2C_SLV4_CTRL,
                       MPU6050_I2C_SLV4_EN_BIT,
                       enabled)
 
     def getSlave4InterruptEnabled(self):
-    '''* Get the enabled value for Slave 4 transaction interrupts.
-     * When set to 1, bit enables the generation of an interrupt signal upon
-     * completion of a Slave 4 transaction. When cleared to 0, bit disables the
-     * generation of an interrupt signal upon completion of a Slave 4 transaction.
-     * The interrupt status can be observed in Register 54.
-     *
-     * @return Current enabled value for Slave 4 transaction interrupts.
-     * @see MPU6050_RA_I2C_SLV4_CTRL
-     '''
-        return self.readBit(devAddr,
+        '''* Get the enabled value for Slave 4 transaction interrupts.
+         * When set to 1, bit enables the generation of an interrupt signal upon
+         * completion of a Slave 4 transaction. When cleared to 0, bit disables the
+         * generation of an interrupt signal upon completion of a Slave 4 transaction.
+         * The interrupt status can be observed in Register 54.
+         *
+         * @return Current enabled value for Slave 4 transaction interrupts.
+         * @see MPU6050_RA_I2C_SLV4_CTRL
+         '''
+        return self.readBit(self.devAddr,
                             MPU6050_RA_I2C_SLV4_CTRL,
                             MPU6050_I2C_SLV4_INT_EN_BIT)
 
@@ -1805,7 +1806,7 @@ class MPU6050:
          * @see getSlave4InterruptEnabled()
          * @see MPU6050_RA_I2C_SLV4_CTRL
          '''
-        self.writeBit(devAddr,
+        self.writeBit(self.devAddr,
                       MPU6050_RA_I2C_SLV4_CTRL,
                       MPU6050_I2C_SLV4_INT_EN_BIT,
                       enabled)
@@ -1820,7 +1821,7 @@ class MPU6050:
          * @return Current write mode for Slave 4 (0 = register address + data, 1 = data only)
          * @see MPU6050_RA_I2C_SLV4_CTRL
          '''
-        return self.readBit(devAddr,
+        return self.readBit(self.devAddr,
                             MPU6050_RA_I2C_SLV4_CTRL,
                             MPU6050_I2C_SLV4_REG_DIS_BIT)
 
@@ -1830,7 +1831,7 @@ class MPU6050:
          * @see getSlave4WriteMode()
          * @see MPU6050_RA_I2C_SLV4_CTRL
          '''
-        self.writeBit(devAddr,
+        self.writeBit(self.devAddr,
                       MPU6050_RA_I2C_SLV4_CTRL,
                       MPU6050_I2C_SLV4_REG_DIS_BIT,
                       mode)
@@ -1851,7 +1852,7 @@ class MPU6050:
          * @return Current Slave 4 master delay value
          * @see MPU6050_RA_I2C_SLV4_CTRL
          '''
-        return self.readBits(devAddr,
+        return self.readBits(self.devAddr,
                              MPU6050_RA_I2C_SLV4_CTRL,
                              MPU6050_I2C_SLV4_MST_DLY_BIT,
                              MPU6050_I2C_SLV4_MST_DLY_LENGTH)
@@ -1862,7 +1863,7 @@ class MPU6050:
          * @see getSlave4MasterDelay()
          * @see MPU6050_RA_I2C_SLV4_CTRL
          '''
-        self.writeBits(devAddr,
+        self.writeBits(self.devAddr,
                        MPU6050_RA_I2C_SLV4_CTRL,
                        MPU6050_I2C_SLV4_MST_DLY_BIT,
                        MPU6050_I2C_SLV4_MST_DLY_LENGTH,
@@ -1875,7 +1876,7 @@ class MPU6050:
          * @return Last available byte read from to Slave 4
          * @see MPU6050_RA_I2C_SLV4_DI
          '''
-        return self.bus.read_byte_data(devAddr, MPU6050_RA_I2C_SLV4_DI)
+        return self.bus.read_byte_data(self.devAddr, MPU6050_RA_I2C_SLV4_DI)
 
 
 # I2C_MST_STATUS register
@@ -1890,7 +1891,7 @@ class MPU6050:
          * @return FSYNC interrupt status
          * @see MPU6050_RA_I2C_MST_STATUS
          '''
-        return self.readBit(devAddr,
+        return self.readBit(self.devAddr,
                             MPU6050_RA_I2C_MST_STATUS,
                             MPU6050_MST_PASS_THROUGH_BIT)
 
@@ -1903,7 +1904,7 @@ class MPU6050:
          * @return Slave 4 transaction done status
          * @see MPU6050_RA_I2C_MST_STATUS
          '''
-        return self.readBit(devAddr,
+        return self.readBit(self.devAddr,
                             MPU6050_RA_I2C_MST_STATUS,
                             MPU6050_MST_I2C_SLV4_DONE_BIT)
 
@@ -1915,7 +1916,7 @@ class MPU6050:
          * @return Master arbitration lost status
          * @see MPU6050_RA_I2C_MST_STATUS
          '''
-        return self.readBit(devAddr,
+        return self.readBit(self.devAddr,
                             MPU6050_RA_I2C_MST_STATUS,
                             MPU6050_MST_I2C_LOST_ARB_BIT)
 
@@ -1927,7 +1928,7 @@ class MPU6050:
          * @return Slave 4 NACK interrupt status
          * @see MPU6050_RA_I2C_MST_STATUS
          '''
-        return self.readBit(devAddr,
+        return self.readBit(self.devAddr,
                             MPU6050_RA_I2C_MST_STATUS,
                             MPU6050_MST_I2C_SLV4_NACK_BIT)
 
@@ -1939,7 +1940,7 @@ class MPU6050:
          * @return Slave 3 NACK interrupt status
          * @see MPU6050_RA_I2C_MST_STATUS
          '''
-        return self.readBit(devAddr,
+        return self.readBit(self.devAddr,
                             MPU6050_RA_I2C_MST_STATUS,
                             MPU6050_MST_I2C_SLV3_NACK_BIT)
 
@@ -1951,7 +1952,7 @@ class MPU6050:
          * @return Slave 2 NACK interrupt status
          * @see MPU6050_RA_I2C_MST_STATUS
          '''
-        return self.readBit(devAddr,
+        return self.readBit(self.devAddr,
                             MPU6050_RA_I2C_MST_STATUS,
                             MPU6050_MST_I2C_SLV2_NACK_BIT)
 
@@ -1963,7 +1964,7 @@ class MPU6050:
          * @return Slave 1 NACK interrupt status
          * @see MPU6050_RA_I2C_MST_STATUS
          '''
-        return self.readBit(devAddr,
+        return self.readBit(self.devAddr,
                             MPU6050_RA_I2C_MST_STATUS,
                             MPU6050_MST_I2C_SLV1_NACK_BIT)
 
@@ -1975,7 +1976,7 @@ class MPU6050:
          * @return Slave 0 NACK interrupt status
          * @see MPU6050_RA_I2C_MST_STATUS
          '''
-        return self.readBit(devAddr,
+        return self.readBit(self.devAddr,
                             MPU6050_RA_I2C_MST_STATUS,
                             MPU6050_MST_I2C_SLV0_NACK_BIT)
 
@@ -1988,7 +1989,7 @@ class MPU6050:
          * @see MPU6050_RA_INT_PIN_CFG
          * @see MPU6050_INTCFG_INT_LEVEL_BIT
          '''
-        return self.readBit(devAddr,
+        return self.readBit(self.devAddr,
                             MPU6050_RA_INT_PIN_CFG,
                             MPU6050_INTCFG_INT_LEVEL_BIT)
 
@@ -1999,10 +2000,10 @@ class MPU6050:
          * @see MPU6050_RA_INT_PIN_CFG
          * @see MPU6050_INTCFG_INT_LEVEL_BIT
          '''
-       self.writeBit(devAddr, \
-                     MPU6050_RA_INT_PIN_CFG, \
-                     MPU6050_INTCFG_INT_LEVEL_BIT, \
-                     mode)
+        self.writeBit(self.devAddr,
+                      MPU6050_RA_INT_PIN_CFG,
+                      MPU6050_INTCFG_INT_LEVEL_BIT,
+                      mode)
 
     def getInterruptDrive(self):
         '''* Get interrupt drive mode.
@@ -2011,7 +2012,7 @@ class MPU6050:
          * @see MPU6050_RA_INT_PIN_CFG
          * @see MPU6050_INTCFG_INT_OPEN_BIT
          '''
-        return self.readBit(devAddr, \
+        return self.readBit(self.devAddr, \
                             MPU6050_RA_INT_PIN_CFG, \
                             MPU6050_INTCFG_INT_OPEN_BIT)
 
@@ -2022,7 +2023,7 @@ class MPU6050:
          * @see MPU6050_RA_INT_PIN_CFG
          * @see MPU6050_INTCFG_INT_OPEN_BIT
          '''
-        self.writeBit(devAddr, \
+        self.writeBit(self.devAddr, \
                       MPU6050_RA_INT_PIN_CFG, \
                       MPU6050_INTCFG_INT_OPEN_BIT, \
                       drive)
@@ -2034,7 +2035,7 @@ class MPU6050:
          * @see MPU6050_RA_INT_PIN_CFG
          * @see MPU6050_INTCFG_LATCH_INT_EN_BIT
          '''
-        return self.readBit(devAddr, \
+        return self.readBit(self.devAddr, \
                             MPU6050_RA_INT_PIN_CFG, \
                             MPU6050_INTCFG_LATCH_INT_EN_BIT)
 
@@ -2045,7 +2046,7 @@ class MPU6050:
          * @see MPU6050_RA_INT_PIN_CFG
          * @see MPU6050_INTCFG_LATCH_INT_EN_BIT
          '''
-        self.writeBit(devAddr, \
+        self.writeBit(self.devAddr, \
                       MPU6050_RA_INT_PIN_CFG, \
                       MPU6050_INTCFG_LATCH_INT_EN_BIT, \
                       latch)
@@ -2057,7 +2058,7 @@ class MPU6050:
          * @see MPU6050_RA_INT_PIN_CFG
          * @see MPU6050_INTCFG_INT_RD_CLEAR_BIT
          '''
-        return self.readBit(devAddr, \
+        return self.readBit(self.devAddr, \
                             MPU6050_RA_INT_PIN_CFG, \
                             MPU6050_INTCFG_INT_RD_CLEAR_BIT)
 
@@ -2068,7 +2069,7 @@ class MPU6050:
          * @see MPU6050_RA_INT_PIN_CFG
          * @see MPU6050_INTCFG_INT_RD_CLEAR_BIT
          '''
-        self.writeBit(devAddr, \
+        self.writeBit(self.devAddr, \
                       MPU6050_RA_INT_PIN_CFG, \
                       MPU6050_INTCFG_INT_RD_CLEAR_BIT, \
                       clear)
@@ -2080,7 +2081,7 @@ class MPU6050:
          * @see MPU6050_RA_INT_PIN_CFG
          * @see MPU6050_INTCFG_FSYNC_INT_LEVEL_BIT
          '''
-        return self.readBit(devAddr, \
+        return self.readBit(self.devAddr, \
                             MPU6050_RA_INT_PIN_CFG, \
                             MPU6050_INTCFG_FSYNC_INT_LEVEL_BIT)
 
@@ -2091,7 +2092,7 @@ class MPU6050:
          * @see MPU6050_RA_INT_PIN_CFG
          * @see MPU6050_INTCFG_FSYNC_INT_LEVEL_BIT
          '''
-        self.writeBit(devAddr, \
+        self.writeBit(self.devAddr, \
                       MPU6050_RA_INT_PIN_CFG, \
                       MPU6050_INTCFG_FSYNC_INT_LEVEL_BIT, \
                       level)
@@ -2103,7 +2104,7 @@ class MPU6050:
          * @see MPU6050_RA_INT_PIN_CFG
          * @see MPU6050_INTCFG_FSYNC_INT_EN_BIT
          '''
-        return self.readBit(devAddr, \
+        return self.readBit(self.devAddr, \
                             MPU6050_RA_INT_PIN_CFG, \
                             MPU6050_INTCFG_FSYNC_INT_EN_BIT)
 
@@ -2114,7 +2115,7 @@ class MPU6050:
          * @see MPU6050_RA_INT_PIN_CFG
          * @see MPU6050_INTCFG_FSYNC_INT_EN_BIT
          '''
-        self.writeBit(devAddr, \
+        self.writeBit(self.devAddr, \
                       MPU6050_RA_INT_PIN_CFG, \
                       MPU6050_INTCFG_FSYNC_INT_EN_BIT, \
                       enabled)
@@ -2131,7 +2132,7 @@ class MPU6050:
          * @see MPU6050_RA_INT_PIN_CFG
          * @see MPU6050_INTCFG_I2C_BYPASS_EN_BIT
          '''
-        return self.readBit(devAddr, \
+        return self.readBit(self.devAddr, \
                             MPU6050_RA_INT_PIN_CFG, \
                             MPU6050_INTCFG_I2C_BYPASS_EN_BIT)
 
@@ -2147,7 +2148,7 @@ class MPU6050:
          * @see MPU6050_RA_INT_PIN_CFG
          * @see MPU6050_INTCFG_I2C_BYPASS_EN_BIT
          '''
-        self.writeBit(devAddr, \
+        self.writeBit(self.devAddr, \
                       MPU6050_RA_INT_PIN_CFG, \
                       MPU6050_INTCFG_I2C_BYPASS_EN_BIT, \
                       enabled)
@@ -2162,7 +2163,7 @@ class MPU6050:
          * @see MPU6050_RA_INT_PIN_CFG
          * @see MPU6050_INTCFG_CLKOUT_EN_BIT
          '''
-        return self.readBit(devAddr, \
+        return self.readBit(self.devAddr, \
                             MPU6050_RA_INT_PIN_CFG, \
                             MPU6050_INTCFG_CLKOUT_EN_BIT)
 
@@ -2176,7 +2177,7 @@ class MPU6050:
          * @see MPU6050_RA_INT_PIN_CFG
          * @see MPU6050_INTCFG_CLKOUT_EN_BIT
          '''
-        self.writeBit(devAddr, \
+        self.writeBit(self.devAddr, \
                       MPU6050_RA_INT_PIN_CFG, \
                       MPU6050_INTCFG_CLKOUT_EN_BIT, \
                       enabled)
@@ -2192,7 +2193,7 @@ class MPU6050:
          * @see MPU6050_RA_INT_ENABLE
          * @see MPU6050_INTERRUPT_FF_BIT
          *'''
-        return self.bus.read_byte_data(devAddr, MPU6050_RA_INT_ENABLE)
+        return self.bus.read_byte_data(self.devAddr, MPU6050_RA_INT_ENABLE)
 
     def setIntEnabled(self, enabled):
         '''* Set full interrupt enabled status.
@@ -2203,7 +2204,7 @@ class MPU6050:
          * @see MPU6050_RA_INT_ENABLE
          * @see MPU6050_INTERRUPT_FF_BIT
          *'''
-        self.bus.write_byte_data(devAddr, MPU6050_RA_INT_ENABLE, enabled)
+        self.bus.write_byte_data(self.devAddr, MPU6050_RA_INT_ENABLE, enabled)
 
     def getIntFreefallEnabled(self):
         '''* Get Free Fall interrupt enabled status.
@@ -2212,7 +2213,7 @@ class MPU6050:
          * @see MPU6050_RA_INT_ENABLE
          * @see MPU6050_INTERRUPT_FF_BIT
          *'''
-        self.readBit(devAddr, MPU6050_RA_INT_ENABLE, MPU6050_INTERRUPT_FF_BIT)
+        self.readBit(self.devAddr, MPU6050_RA_INT_ENABLE, MPU6050_INTERRUPT_FF_BIT)
 
     def setIntFreefallEnabled(self, enabled):
         '''* Set Free Fall interrupt enabled status.
@@ -2221,7 +2222,7 @@ class MPU6050:
          * @see MPU6050_RA_INT_ENABLE
          * @see MPU6050_INTERRUPT_FF_BIT
          *'''
-        self.writeBit(devAddr, \
+        self.writeBit(self.devAddr, \
                       MPU6050_RA_INT_ENABLE, \
                       MPU6050_INTERRUPT_FF_BIT, \
                       enabled)
@@ -2233,7 +2234,7 @@ class MPU6050:
          * @see MPU6050_RA_INT_ENABLE
          * @see MPU6050_INTERRUPT_MOT_BIT
          *'''
-        return self.readBit(devAddr, \
+        return self.readBit(self.devAddr, \
                             MPU6050_RA_INT_ENABLE, \
                             MPU6050_INTERRUPT_MOT_BIT)
 
@@ -2244,7 +2245,7 @@ class MPU6050:
          * @see MPU6050_RA_INT_ENABLE
          * @see MPU6050_INTERRUPT_MOT_BIT
          *'''
-        self.writeBit(devAddr, \
+        self.writeBit(self.devAddr, \
                       MPU6050_RA_INT_ENABLE, \
                       MPU6050_INTERRUPT_MOT_BIT, \
                       enabled)
@@ -2256,7 +2257,7 @@ class MPU6050:
          * @see MPU6050_RA_INT_ENABLE
          * @see MPU6050_INTERRUPT_ZMOT_BIT
          *'''
-        return self.readBit(devAddr, \
+        return self.readBit(self.devAddr, \
                             MPU6050_RA_INT_ENABLE, \
                             MPU6050_INTERRUPT_ZMOT_BIT)
 
@@ -2267,7 +2268,7 @@ class MPU6050:
          * @see MPU6050_RA_INT_ENABLE
          * @see MPU6050_INTERRUPT_ZMOT_BIT
          *'''
-        self.writeBit(devAddr, \
+        self.writeBit(self.devAddr, \
                       MPU6050_RA_INT_ENABLE, \
                       MPU6050_INTERRUPT_ZMOT_BIT, \
                       enabled)
@@ -2279,7 +2280,7 @@ class MPU6050:
          * @see MPU6050_RA_INT_ENABLE
          * @see MPU6050_INTERRUPT_FIFO_OFLOW_BIT
          *'''
-        return self.readBit(devAddr, \
+        return self.readBit(self.devAddr, \
                             MPU6050_RA_INT_ENABLE, \
                             MPU6050_INTERRUPT_FIFO_OFLOW_BIT)
 
@@ -2290,7 +2291,7 @@ class MPU6050:
          * @see MPU6050_RA_INT_ENABLE
          * @see MPU6050_INTERRUPT_FIFO_OFLOW_BIT
          *'''
-        self.writeBit(devAddr, \
+        self.writeBit(self.devAddr, \
                       MPU6050_RA_INT_ENABLE, \
                       MPU6050_INTERRUPT_FIFO_OFLOW_BIT, \
                       enabled)
@@ -2303,7 +2304,7 @@ class MPU6050:
          * @see MPU6050_RA_INT_ENABLE
          * @see MPU6050_INTERRUPT_I2C_MST_INT_BIT
          *'''
-        return self.readBit(devAddr, \
+        return self.readBit(self.devAddr, \
                             MPU6050_RA_INT_ENABLE, \
                             MPU6050_INTERRUPT_I2C_MST_INT_BIT)
 
@@ -2314,7 +2315,7 @@ class MPU6050:
          * @see MPU6050_RA_INT_ENABLE
          * @see MPU6050_INTERRUPT_I2C_MST_INT_BIT
          *'''
-        self.writeBit(devAddr, \
+        self.writeBit(self.devAddr, \
                       MPU6050_RA_INT_ENABLE, \
                       MPU6050_INTERRUPT_I2C_MST_INT_BIT, \
                       enabled)
@@ -2327,7 +2328,7 @@ class MPU6050:
          * @see MPU6050_RA_INT_ENABLE
          * @see MPU6050_INTERRUPT_DATA_RDY_BIT
          '''
-        return self.readBit(devAddr, \
+        return self.readBit(self.devAddr, \
                             MPU6050_RA_INT_ENABLE, \
                             MPU6050_INTERRUPT_DATA_RDY_BIT)
 
@@ -2338,7 +2339,7 @@ class MPU6050:
          * @see MPU6050_RA_INT_CFG
          * @see MPU6050_INTERRUPT_DATA_RDY_BIT
          '''
-        self.writeBit(devAddr, \
+        self.writeBit(self.devAddr, \
                       MPU6050_RA_INT_ENABLE, \
                       MPU6050_INTERRUPT_DATA_RDY_BIT, \
                       enabled)
@@ -2353,7 +2354,7 @@ class MPU6050:
          * @return Current interrupt status
          * @see MPU6050_RA_INT_STATUS
          '''
-        return self.bus.read_byte_data(devAddr, MPU6050_RA_INT_STATUS)
+        return self.bus.read_byte_data(self.devAddr, MPU6050_RA_INT_STATUS)
 
     def getIntFreefallStatus(self):
         '''* Get Free Fall interrupt status.
@@ -2363,7 +2364,7 @@ class MPU6050:
          * @see MPU6050_RA_INT_STATUS
          * @see MPU6050_INTERRUPT_FF_BIT
          '''
-        return self.readBit(devAddr, \
+        return self.readBit(self.devAddr, \
                             MPU6050_RA_INT_STATUS, \
                             MPU6050_INTERRUPT_FF_BIT)
 
@@ -2375,7 +2376,7 @@ class MPU6050:
          * @see MPU6050_RA_INT_STATUS
          * @see MPU6050_INTERRUPT_MOT_BIT
          '''
-        return self.readBit(devAddr, \
+        return self.readBit(self.devAddr, \
                             MPU6050_RA_INT_STATUS, \
                             MPU6050_INTERRUPT_MOT_BIT)
 
@@ -2387,7 +2388,7 @@ class MPU6050:
          * @see MPU6050_RA_INT_STATUS
          * @see MPU6050_INTERRUPT_ZMOT_BIT
          '''
-        return self.readBit(devAddr, \
+        return self.readBit(self.devAddr, \
                             MPU6050_RA_INT_STATUS, \
                             MPU6050_INTERRUPT_ZMOT_BIT)
 
@@ -2399,7 +2400,7 @@ class MPU6050:
          * @see MPU6050_RA_INT_STATUS
          * @see MPU6050_INTERRUPT_FIFO_OFLOW_BIT
          '''
-        return self.readBit(devAddr, \
+        return self.readBit(self.devAddr, \
                             MPU6050_RA_INT_STATUS, \
                             MPU6050_INTERRUPT_FIFO_OFLOW_BIT)
 
@@ -2412,7 +2413,7 @@ class MPU6050:
          * @see MPU6050_RA_INT_STATUS
          * @see MPU6050_INTERRUPT_I2C_MST_INT_BIT
          '''
-        return self.readBit(devAddr, \
+        return self.readBit(self.devAddr, \
                             MPU6050_RA_INT_STATUS, \
                             MPU6050_INTERRUPT_I2C_MST_INT_BIT)
 
@@ -2424,7 +2425,7 @@ class MPU6050:
          * @see MPU6050_RA_INT_STATUS
          * @see MPU6050_INTERRUPT_DATA_RDY_BIT
          '''
-        return self.readBit(devAddr, \
+        return self.readBit(self.devAddr, \
                             MPU6050_RA_INT_STATUS, \
                             MPU6050_INTERRUPT_DATA_RDY_BIT)
 
@@ -2464,7 +2465,7 @@ class MPU6050:
          * @see getRotation()
          * @see MPU6050_RA_ACCEL_XOUT_H
          '''
-        buffer = self.readBytes(devAddr, MPU6050_RA_ACCEL_XOUT_H, 14)
+        buffer = self.readBytes(self.devAddr, MPU6050_RA_ACCEL_XOUT_H, 14)
         ax = (buffer[0] << 8) | buffer[1]
         ay = (buffer[2] << 8) | buffer[3]
         az = (buffer[4] << 8) | buffer[5]
@@ -2510,7 +2511,7 @@ class MPU6050:
          * @param z 16-bit signed integer container for Z-axis acceleration
          * @see MPU6050_RA_GYRO_XOUT_H
          '''
-        buffer = self.readBytes(devAddr, MPU6050_RA_ACCEL_XOUT_H, 6)
+        buffer = self.readBytes(self.devAddr, MPU6050_RA_ACCEL_XOUT_H, 6)
         x = (buffer[0] << 8) | buffer[1]
         y = (buffer[2] << 8) | buffer[3]
         z = (buffer[4] << 8) | buffer[5]
@@ -2523,7 +2524,7 @@ class MPU6050:
          * @see getMotion6()
          * @see MPU6050_RA_ACCEL_XOUT_H
          '''
-        buffer = self.readBytes(devAddr, MPU6050_RA_ACCEL_XOUT_H, 2)
+        buffer = self.readBytes(self.devAddr, MPU6050_RA_ACCEL_XOUT_H, 2)
         return (buffer[0] << 8) | buffer[1]
 
     def getAccelerationY(self):
@@ -2533,7 +2534,7 @@ class MPU6050:
          * @see getMotion6()
          * @see MPU6050_RA_ACCEL_YOUT_H
          '''
-        buffer = self.readBytes(devAddr, MPU6050_RA_ACCEL_YOUT_H)
+        buffer = self.readBytes(self.devAddr, MPU6050_RA_ACCEL_YOUT_H)
         return (buffer[0] << 8) | buffer[1]
 
     def getAccelerationZ(self):
@@ -2543,7 +2544,7 @@ class MPU6050:
          * @see getMotion6()
          * @see MPU6050_RA_ACCEL_ZOUT_H
          '''
-        buffer = self.readBytes(devAddr, MPU6050_RA_ACCEL_ZOUT_H, 2)
+        buffer = self.readBytes(self.devAddr, MPU6050_RA_ACCEL_ZOUT_H, 2)
         return (buffer[0] << 8) | buffer[1]
 
 
@@ -2554,8 +2555,8 @@ class MPU6050:
          * @return Temperature reading in 16-bit 2's complement format
          * @see MPU6050_RA_TEMP_OUT_H
          '''
-        buffer = self.readBytes(devAddr, MPU6050_RA_TEMP_OUT_H, 2)
-        return (((int16_t)buffer[0]) << 8) | buffer[1]
+        buffer = self.readBytes(self.devAddr, MPU6050_RA_TEMP_OUT_H, 2)
+        return ((buffer[0]) << 8) | buffer[1]
 
 
 # GYRO_*OUT_* registers
@@ -2593,7 +2594,7 @@ class MPU6050:
          * @see getMotion6()
          * @see MPU6050_RA_GYRO_XOUT_H
          '''
-        buffer = self.readBytes(devAddr, MPU6050_RA_GYRO_XOUT_H, 6)
+        buffer = self.readBytes(self.devAddr, MPU6050_RA_GYRO_XOUT_H, 6)
         x = (buffer[0] << 8) | buffer[1]
         y = (buffer[2] << 8) | buffer[3]
         z = (buffer[4] << 8) | buffer[5]
@@ -2605,7 +2606,7 @@ class MPU6050:
          * @see getMotion6()
          * @see MPU6050_RA_GYRO_XOUT_H
          '''
-        buffer = self.readBytes(devAddr, MPU6050_RA_GYRO_XOUT_H, 2)
+        buffer = self.readBytes(self.devAddr, MPU6050_RA_GYRO_XOUT_H, 2)
         return (buffer[0] << 8) | buffer[1]
 
     def getRotationY(self):
@@ -2614,7 +2615,7 @@ class MPU6050:
          * @see getMotion6()
          * @see MPU6050_RA_GYRO_YOUT_H
          '''
-        buffer = self.readBytes(devAddr, MPU6050_RA_GYRO_YOUT_H, 2)
+        buffer = self.readBytes(self.devAddr, MPU6050_RA_GYRO_YOUT_H, 2)
         return (buffer[0] << 8) | buffer[1]
 
     def getRotationZ(self):
@@ -2623,7 +2624,7 @@ class MPU6050:
          * @see getMotion6()
          * @see MPU6050_RA_GYRO_ZOUT_H
          '''
-        buffer = self.readBytes(devAddr, MPU6050_RA_GYRO_ZOUT_H, 2)
+        buffer = self.readBytes(self.devAddr, MPU6050_RA_GYRO_ZOUT_H, 2)
         return (buffer[0] << 8) | buffer[1]
 
 
@@ -2704,7 +2705,7 @@ class MPU6050:
          * @param position Starting position (0-23)
          * @return Byte read from register
          '''
-        return self.bus.read_byte_data(devAddr, MPU6050_RA_EXT_SENS_DATA_00 + position, buffer)
+        return self.bus.read_byte_data(self.devAddr, MPU6050_RA_EXT_SENS_DATA_00 + position, buffer)
 
     def getExternalSensorWord(self, position):
         '''* Read word (2 bytes) from external sensor data registers.
@@ -2712,7 +2713,7 @@ class MPU6050:
          * @return Word read from register
          * @see getExternalSensorByte()
          '''
-        buffer = self.readBytes(devAddr, MPU6050_RA_EXT_SENS_DATA_00 + position, 2)
+        buffer = self.readBytes(self.devAddr, MPU6050_RA_EXT_SENS_DATA_00 + position, 2)
         return (buffer[0] << 8) | buffer[1]
 
     def getExternalSensorDWord(self, position):
@@ -2721,7 +2722,7 @@ class MPU6050:
          * @return Double word read from registers
          * @see getExternalSensorByte()
          '''
-        buffer = self.readBytes(devAddr, MPU6050_RA_EXT_SENS_DATA_00 + position, 4)
+        buffer = self.readBytes(self.devAddr, MPU6050_RA_EXT_SENS_DATA_00 + position, 4)
         return (buffer[0] << 24) | (buffer[1] << 16) | (buffer[2] << 8) | buffer[3]
 
 
@@ -2732,7 +2733,7 @@ class MPU6050:
          * @return Motion detection status byte
          * @see MPU6050_RA_MOT_DETECT_STATUS
          '''
-        return self.bus.read_byte_data(devAddr, MPU6050_RA_MOT_DETECT_STATUS)
+        return self.bus.read_byte_data(self.devAddr, MPU6050_RA_MOT_DETECT_STATUS)
 
     def getXNegMotionDetected(self):
         '''* Get X-axis negative motion detection interrupt status.
@@ -2740,7 +2741,7 @@ class MPU6050:
          * @see MPU6050_RA_MOT_DETECT_STATUS
          * @see MPU6050_MOTION_MOT_XNEG_BIT
          '''
-        return self.readBit(devAddr, \
+        return self.readBit(self.devAddr, \
                             MPU6050_RA_MOT_DETECT_STATUS, \
                             MPU6050_MOTION_MOT_XNEG_BIT)
 
@@ -2750,7 +2751,7 @@ class MPU6050:
          * @see MPU6050_RA_MOT_DETECT_STATUS
          * @see MPU6050_MOTION_MOT_XPOS_BIT
          '''
-        return self.readBit(devAddr, \
+        return self.readBit(self.devAddr, \
                             MPU6050_RA_MOT_DETECT_STATUS, \
                             MPU6050_MOTION_MOT_XPOS_BIT)
 
@@ -2760,7 +2761,7 @@ class MPU6050:
          * @see MPU6050_RA_MOT_DETECT_STATUS
          * @see MPU6050_MOTION_MOT_YNEG_BIT
          '''
-        return self.readBit(devAddr, \
+        return self.readBit(self.devAddr, \
                             MPU6050_RA_MOT_DETECT_STATUS, \
                             MPU6050_MOTION_MOT_YNEG_BIT)
 
@@ -2770,7 +2771,7 @@ class MPU6050:
          * @see MPU6050_RA_MOT_DETECT_STATUS
          * @see MPU6050_MOTION_MOT_YPOS_BIT
          '''
-        return self.readBit(devAddr, \
+        return self.readBit(self.devAddr, \
                             MPU6050_RA_MOT_DETECT_STATUS, \
                             MPU6050_MOTION_MOT_YPOS_BIT)
 
@@ -2780,7 +2781,7 @@ class MPU6050:
          * @see MPU6050_RA_MOT_DETECT_STATUS
          * @see MPU6050_MOTION_MOT_ZNEG_BIT
          '''
-        return self.readBit(devAddr, \
+        return self.readBit(self.devAddr, \
                             MPU6050_RA_MOT_DETECT_STATUS, \
                             MPU6050_MOTION_MOT_ZNEG_BIT)
 
@@ -2790,7 +2791,7 @@ class MPU6050:
          * @see MPU6050_RA_MOT_DETECT_STATUS
          * @see MPU6050_MOTION_MOT_ZPOS_BIT
          '''
-        return self.readBit(devAddr, \
+        return self.readBit(self.devAddr, \
                      MPU6050_RA_MOT_DETECT_STATUS, \
                      MPU6050_MOTION_MOT_ZPOS_BIT)
 
@@ -2800,7 +2801,7 @@ class MPU6050:
          * @see MPU6050_RA_MOT_DETECT_STATUS
          * @see MPU6050_MOTION_MOT_ZRMOT_BIT
          '''
-        return self.readBit(devAddr, \
+        return self.readBit(self.devAddr, \
                             MPU6050_RA_MOT_DETECT_STATUS, \
                             MPU6050_MOTION_MOT_ZRMOT_BIT)
 
@@ -2816,7 +2817,7 @@ class MPU6050:
          * @see MPU6050_RA_I2C_SLV0_DO
         '''
         if (num > 3) : return
-        self.bus.write_byte_data(devAddr, MPU6050_RA_I2C_SLV0_DO + num, data)
+        self.bus.write_byte_data(self.devAddr, MPU6050_RA_I2C_SLV0_DO + num, data)
 
 # I2C_MST_DELAY_CTRL register
 
@@ -2829,7 +2830,7 @@ class MPU6050:
          * @see MPU6050_RA_I2C_MST_DELAY_CTRL
          * @see MPU6050_DELAYCTRL_DELAY_ES_SHADOW_BIT
          '''
-        return self.readBit(devAddr, \
+        return self.readBit(self.devAddr, \
                             MPU6050_RA_I2C_MST_DELAY_CTRL, \
                             MPU6050_DELAYCTRL_DELAY_ES_SHADOW_BIT)
 
@@ -2840,7 +2841,7 @@ class MPU6050:
          * @see MPU6050_RA_I2C_MST_DELAY_CTRL
          * @see MPU6050_DELAYCTRL_DELAY_ES_SHADOW_BIT
          '''
-        self.writeBit(devAddr, \
+        self.writeBit(self.devAddr, \
                       MPU6050_RA_I2C_MST_DELAY_CTRL, \
                       MPU6050_DELAYCTRL_DELAY_ES_SHADOW_BIT, \
                       enabled)
@@ -2866,7 +2867,7 @@ class MPU6050:
          '''
         # MPU6050_DELAYCTRL_I2C_SLV4_DLY_EN_BIT is 4, is 3, etc.
         if (num > 4) : return 0
-        return self.readBit(devAddr, MPU6050_RA_I2C_MST_DELAY_CTRL, num)
+        return self.readBit(self.devAddr, MPU6050_RA_I2C_MST_DELAY_CTRL, num)
 
     def setSlaveDelayEnabled(self, num, enabled):
         '''* Set slave delay enabled status.
@@ -2875,7 +2876,7 @@ class MPU6050:
          * @see MPU6050_RA_I2C_MST_DELAY_CTRL
          * @see MPU6050_DELAYCTRL_I2C_SLV0_DLY_EN_BIT
          '''
-        self.writeBit(devAddr, MPU6050_RA_I2C_MST_DELAY_CTRL, num, enabled)
+        self.writeBit(self.devAddr, MPU6050_RA_I2C_MST_DELAY_CTRL, num, enabled)
 
 # SIGNAL_PATH_RESET register
 
@@ -2886,7 +2887,7 @@ class MPU6050:
          * @see MPU6050_RA_SIGNAL_PATH_RESET
          * @see MPU6050_PATHRESET_GYRO_RESET_BIT
          '''
-        self.writeBit(devAddr, \
+        self.writeBit(self.devAddr, \
                       MPU6050_RA_SIGNAL_PATH_RESET, \
                       MPU6050_PATHRESET_GYRO_RESET_BIT, \
                       True)
@@ -2898,7 +2899,7 @@ class MPU6050:
          * @see MPU6050_RA_SIGNAL_PATH_RESET
          * @see MPU6050_PATHRESET_ACCEL_RESET_BIT
          '''
-        self.writeBit(devAddr, \
+        self.writeBit(self.devAddr, \
                       MPU6050_RA_SIGNAL_PATH_RESET, \
                       MPU6050_PATHRESET_ACCEL_RESET_BIT, \
                       True)
@@ -2910,7 +2911,7 @@ class MPU6050:
          * @see MPU6050_RA_SIGNAL_PATH_RESET
          * @see MPU6050_PATHRESET_TEMP_RESET_BIT
          '''
-        self.writeBit(devAddr, \
+        self.writeBit(self.devAddr, \
                       MPU6050_RA_SIGNAL_PATH_RESET, \
                       MPU6050_PATHRESET_TEMP_RESET_BIT, \
                       True)
@@ -2932,7 +2933,7 @@ class MPU6050:
          * @see MPU6050_RA_MOT_DETECT_CTRL
          * @see MPU6050_DETECT_ACCEL_ON_DELAY_BIT
          '''
-        return self.readBits(devAddr, \
+        return self.readBits(self.devAddr, \
                              MPU6050_RA_MOT_DETECT_CTRL, \
                              MPU6050_DETECT_ACCEL_ON_DELAY_BIT, \
                              MPU6050_DETECT_ACCEL_ON_DELAY_LENGTH)
@@ -2944,7 +2945,7 @@ class MPU6050:
          * @see MPU6050_RA_MOT_DETECT_CTRL
          * @see MPU6050_DETECT_ACCEL_ON_DELAY_BIT
          '''
-        self.writeBits(devAddr, \
+        self.writeBits(self.devAddr, \
                        MPU6050_RA_MOT_DETECT_CTRL, \
                        MPU6050_DETECT_ACCEL_ON_DELAY_BIT, \
                        MPU6050_DETECT_ACCEL_ON_DELAY_LENGTH, \
@@ -2977,7 +2978,7 @@ class MPU6050:
          * @see MPU6050_RA_MOT_DETECT_CTRL
          * @see MPU6050_DETECT_FF_COUNT_BIT
          '''
-        return self.readBits(devAddr, \
+        return self.readBits(self.devAddr, \
                              MPU6050_RA_MOT_DETECT_CTRL, \
                              MPU6050_DETECT_FF_COUNT_BIT, \
                              MPU6050_DETECT_FF_COUNT_LENGTH)
@@ -2989,7 +2990,7 @@ class MPU6050:
          * @see MPU6050_RA_MOT_DETECT_CTRL
          * @see MPU6050_DETECT_FF_COUNT_BIT
          '''
-        self.writeBits(devAddr, \
+        self.writeBits(self.devAddr, \
                        MPU6050_RA_MOT_DETECT_CTRL, \
                        MPU6050_DETECT_FF_COUNT_BIT, \
                        MPU6050_DETECT_FF_COUNT_LENGTH, \
@@ -3019,7 +3020,7 @@ class MPU6050:
          * please refer to Registers 29 to 32.
          *
          '''
-        return self.readBits(devAddr, \
+        return self.readBits(self.devAddr, \
                              MPU6050_RA_MOT_DETECT_CTRL, \
                              MPU6050_DETECT_MOT_COUNT_BIT, \
                              MPU6050_DETECT_MOT_COUNT_LENGTH)
@@ -3031,7 +3032,7 @@ class MPU6050:
          * @see MPU6050_RA_MOT_DETECT_CTRL
          * @see MPU6050_DETECT_MOT_COUNT_BIT
          '''
-        self.writeBits(devAddr, \
+        self.writeBits(self.devAddr, \
                        MPU6050_RA_MOT_DETECT_CTRL, \
                        MPU6050_DETECT_MOT_COUNT_BIT, \
                        MPU6050_DETECT_MOT_COUNT_LENGTH, \
@@ -3048,7 +3049,7 @@ class MPU6050:
          * @see MPU6050_RA_USER_CTRL
          * @see MPU6050_USERCTRL_FIFO_EN_BIT
          '''
-        return self.readBit(devAddr, \
+        return self.readBit(self.devAddr, \
                             MPU6050_RA_USER_CTRL, \
                             MPU6050_USERCTRL_FIFO_EN_BIT)
 
@@ -3059,7 +3060,7 @@ class MPU6050:
          * @see MPU6050_RA_USER_CTRL
          * @see MPU6050_USERCTRL_FIFO_EN_BIT
          '''
-        self.writeBit(devAddr, \
+        self.writeBit(self.devAddr, \
                       MPU6050_RA_USER_CTRL, \
                       MPU6050_USERCTRL_FIFO_EN_BIT, \
                       enabled)
@@ -3076,7 +3077,7 @@ class MPU6050:
          * @see MPU6050_RA_USER_CTRL
          * @see MPU6050_USERCTRL_I2C_MST_EN_BIT
          '''
-        return self.readBit(devAddr, \
+        return self.readBit(self.devAddr, \
                             MPU6050_RA_USER_CTRL, \
                             MPU6050_USERCTRL_I2C_MST_EN_BIT)
 
@@ -3087,7 +3088,7 @@ class MPU6050:
          * @see MPU6050_RA_USER_CTRL
          * @see MPU6050_USERCTRL_I2C_MST_EN_BIT
          '''
-        self.writeBit(devAddr, \
+        self.writeBit(self.devAddr, \
                       MPU6050_RA_USER_CTRL, \
                       MPU6050_USERCTRL_I2C_MST_EN_BIT, \
                       enabled)
@@ -3097,7 +3098,7 @@ class MPU6050:
          * If self is set, primary SPI interface will be enabled in place of the
          * disabled primary I2C interface.
          '''
-        self.writeBit(devAddr, \
+        self.writeBit(self.devAddr, \
                        MPU6050_RA_USER_CTRL, \
                       MPU6050_USERCTRL_I2C_IF_DIS_BIT, \
                       enabled)
@@ -3109,7 +3110,7 @@ class MPU6050:
          * @see MPU6050_RA_USER_CTRL
          * @see MPU6050_USERCTRL_FIFO_RESET_BIT
          '''
-        self.writeBit(devAddr, \
+        self.writeBit(self.devAddr, \
                         MPU6050_RA_USER_CTRL, \
                       MPU6050_USERCTRL_FIFO_RESET_BIT, \
                       True)
@@ -3121,7 +3122,7 @@ class MPU6050:
          * @see MPU6050_RA_USER_CTRL
          * @see MPU6050_USERCTRL_I2C_MST_RESET_BIT
          '''
-        self.writeBit(devAddr, \
+        self.writeBit(self.devAddr, \
                       MPU6050_RA_USER_CTRL, \
                       MPU6050_USERCTRL_I2C_MST_RESET_BIT, \
                       True)
@@ -3139,7 +3140,7 @@ class MPU6050:
          * @see MPU6050_RA_USER_CTRL
          * @see MPU6050_USERCTRL_SIG_COND_RESET_BIT
          '''
-        self.writeBit(devAddr, \
+        self.writeBit(self.devAddr, \
                       MPU6050_RA_USER_CTRL, \
                       MPU6050_USERCTRL_SIG_COND_RESET_BIT, \
                       True)
@@ -3153,7 +3154,7 @@ class MPU6050:
          * @see MPU6050_RA_PWR_MGMT_1
          * @see MPU6050_PWR1_DEVICE_RESET_BIT
          '''
-        self.writeBit(devAddr, \
+        self.writeBit(self.devAddr, \
                       MPU6050_RA_PWR_MGMT_1, \
                       MPU6050_PWR1_DEVICE_RESET_BIT, \
                       True)
@@ -3170,7 +3171,7 @@ class MPU6050:
          * @see MPU6050_RA_PWR_MGMT_1
          * @see MPU6050_PWR1_SLEEP_BIT
          '''
-        self.readBit(devAddr, \
+        self.readBit(self.devAddr, \
                      MPU6050_RA_PWR_MGMT_1, \
                      MPU6050_PWR1_SLEEP_BIT, \
                      buffer)
@@ -3182,7 +3183,7 @@ class MPU6050:
          * @see MPU6050_RA_PWR_MGMT_1
          * @see MPU6050_PWR1_SLEEP_BIT
          '''
-        self.writeBit(devAddr, \
+        self.writeBit(self.devAddr, \
                       MPU6050_RA_PWR_MGMT_1, \
                       MPU6050_PWR1_SLEEP_BIT, \
                       enabled)
@@ -3196,7 +3197,7 @@ class MPU6050:
          * @see MPU6050_RA_PWR_MGMT_1
          * @see MPU6050_PWR1_CYCLE_BIT
          '''
-        return self.readBit(devAddr, \
+        return self.readBit(self.devAddr, \
                             MPU6050_RA_PWR_MGMT_1, \
                             MPU6050_PWR1_CYCLE_BIT)
 
@@ -3207,7 +3208,7 @@ class MPU6050:
          * @see MPU6050_RA_PWR_MGMT_1
          * @see MPU6050_PWR1_CYCLE_BIT
          '''
-        self.writeBit(devAddr, \
+        self.writeBit(self.devAddr, \
                       MPU6050_RA_PWR_MGMT_1, \
                       MPU6050_PWR1_CYCLE_BIT, \
                       enabled)
@@ -3224,7 +3225,7 @@ class MPU6050:
          * @see MPU6050_RA_PWR_MGMT_1
          * @see MPU6050_PWR1_TEMP_DIS_BIT
          '''
-        buffer = self.readBit(devAddr, MPU6050_RA_PWR_MGMT_1, MPU6050_PWR1_TEMP_DIS_BIT)
+        buffer = self.readBit(self.devAddr, MPU6050_RA_PWR_MGMT_1, MPU6050_PWR1_TEMP_DIS_BIT)
         return buffer == 0; # 1 is actually disabled here
 
     def setTempSensorEnabled(self, enabled):
@@ -3239,7 +3240,7 @@ class MPU6050:
          * @see MPU6050_PWR1_TEMP_DIS_BIT
          '''
         # 1 is actually disabled here
-        self.writeBit(devAddr, \
+        self.writeBit(self.devAddr, \
                       MPU6050_RA_PWR_MGMT_1, \
                       MPU6050_PWR1_TEMP_DIS_BIT, \
                       enabled)
@@ -3251,7 +3252,7 @@ class MPU6050:
          * @see MPU6050_PWR1_CLKSEL_BIT
          * @see MPU6050_PWR1_CLKSEL_LENGTH
          '''
-        return self.readBits(devAddr, \
+        return self.readBits(self.devAddr, \
                              MPU6050_RA_PWR_MGMT_1, \
                              MPU6050_PWR1_CLKSEL_BIT, \
                              MPU6050_PWR1_CLKSEL_LENGTH)
@@ -3287,7 +3288,7 @@ class MPU6050:
          * @see MPU6050_PWR1_CLKSEL_BIT
          * @see MPU6050_PWR1_CLKSEL_LENGTH
          '''
-        self.writeBits(devAddr, \
+        self.writeBits(self.devAddr, \
                        MPU6050_RA_PWR_MGMT_1, \
                        MPU6050_PWR1_CLKSEL_BIT, \
                        MPU6050_PWR1_CLKSEL_LENGTH, \
@@ -3320,7 +3321,7 @@ class MPU6050:
          * @return Current wake frequency
          * @see MPU6050_RA_PWR_MGMT_2
          '''
-        return self.readBits(devAddr, \
+        return self.readBits(self.devAddr, \
                              MPU6050_RA_PWR_MGMT_2, \
                              MPU6050_PWR2_LP_WAKE_CTRL_BIT, \
                              MPU6050_PWR2_LP_WAKE_CTRL_LENGTH)
@@ -3330,7 +3331,7 @@ class MPU6050:
          * @param frequency New wake frequency
          * @see MPU6050_RA_PWR_MGMT_2
          '''
-        self.writeBits(devAddr, \
+        self.writeBits(self.devAddr, \
                        MPU6050_RA_PWR_MGMT_2, \
                        MPU6050_PWR2_LP_WAKE_CTRL_BIT, \
                        MPU6050_PWR2_LP_WAKE_CTRL_LENGTH, \
@@ -3343,7 +3344,7 @@ class MPU6050:
          * @see MPU6050_RA_PWR_MGMT_2
          * @see MPU6050_PWR2_STBY_XA_BIT
          '''
-        return self.readBit(devAddr, \
+        return self.readBit(self.devAddr, \
                             MPU6050_RA_PWR_MGMT_2, \
                             MPU6050_PWR2_STBY_XA_BIT)
 
@@ -3354,7 +3355,7 @@ class MPU6050:
          * @see MPU6050_RA_PWR_MGMT_2
          * @see MPU6050_PWR2_STBY_XA_BIT
          '''
-        self.writeBit(devAddr, \
+        self.writeBit(self.devAddr, \
                       MPU6050_RA_PWR_MGMT_2, \
                       MPU6050_PWR2_STBY_XA_BIT, \
                       enabled)
@@ -3366,7 +3367,7 @@ class MPU6050:
          * @see MPU6050_RA_PWR_MGMT_2
          * @see MPU6050_PWR2_STBY_YA_BIT
          '''
-        return self.readBit(devAddr, \
+        return self.readBit(self.devAddr, \
                             MPU6050_RA_PWR_MGMT_2, \
                             MPU6050_PWR2_STBY_YA_BIT)
 
@@ -3377,7 +3378,7 @@ class MPU6050:
          * @see MPU6050_RA_PWR_MGMT_2
          * @see MPU6050_PWR2_STBY_YA_BIT
          '''
-        self.writeBit(devAddr, \
+        self.writeBit(self.devAddr, \
                       MPU6050_RA_PWR_MGMT_2, \
                       MPU6050_PWR2_STBY_YA_BIT, \
                       enabled)
@@ -3389,7 +3390,7 @@ class MPU6050:
          * @see MPU6050_RA_PWR_MGMT_2
          * @see MPU6050_PWR2_STBY_ZA_BIT
          '''
-        return self.readBit(devAddr, \
+        return self.readBit(self.devAddr, \
                             MPU6050_RA_PWR_MGMT_2, \
                             MPU6050_PWR2_STBY_ZA_BIT)
 
@@ -3400,7 +3401,7 @@ class MPU6050:
          * @see MPU6050_RA_PWR_MGMT_2
          * @see MPU6050_PWR2_STBY_ZA_BIT
          '''
-        self.writeBit(devAddr, \
+        self.writeBit(self.devAddr, \
                       MPU6050_RA_PWR_MGMT_2, \
                       MPU6050_PWR2_STBY_ZA_BIT, \
                       enabled)
@@ -3412,7 +3413,7 @@ class MPU6050:
          * @see MPU6050_RA_PWR_MGMT_2
          * @see MPU6050_PWR2_STBY_XG_BIT
          '''
-        return self.readBit(devAddr, \
+        return self.readBit(self.devAddr, \
                             MPU6050_RA_PWR_MGMT_2, \
                             MPU6050_PWR2_STBY_XG_BIT)
 
@@ -3423,7 +3424,7 @@ class MPU6050:
          * @see MPU6050_RA_PWR_MGMT_2
          * @see MPU6050_PWR2_STBY_XG_BIT
          '''
-        self.writeBit(devAddr, \
+        self.writeBit(self.devAddr, \
                       MPU6050_RA_PWR_MGMT_2, \
                       MPU6050_PWR2_STBY_XG_BIT, \
                       enabled)
@@ -3435,7 +3436,7 @@ class MPU6050:
          * @see MPU6050_RA_PWR_MGMT_2
          * @see MPU6050_PWR2_STBY_YG_BIT
          '''
-        return self.readBit(devAddr, \
+        return self.readBit(self.devAddr, \
                             MPU6050_RA_PWR_MGMT_2, \
                             MPU6050_PWR2_STBY_YG_BIT)
 
@@ -3446,7 +3447,7 @@ class MPU6050:
          * @see MPU6050_RA_PWR_MGMT_2
          * @see MPU6050_PWR2_STBY_YG_BIT
          '''
-        self.writeBit(devAddr, \
+        self.writeBit(self.devAddr, \
                       MPU6050_RA_PWR_MGMT_2, \
                       MPU6050_PWR2_STBY_YG_BIT, \
                       enabled)
@@ -3458,7 +3459,7 @@ class MPU6050:
          * @see MPU6050_RA_PWR_MGMT_2
          * @see MPU6050_PWR2_STBY_ZG_BIT
          '''
-        return self.readBit(devAddr, \
+        return self.readBit(self.devAddr, \
                             MPU6050_RA_PWR_MGMT_2, \
                             MPU6050_PWR2_STBY_ZG_BIT)
 
@@ -3469,7 +3470,7 @@ class MPU6050:
          * @see MPU6050_RA_PWR_MGMT_2
          * @see MPU6050_PWR2_STBY_ZG_BIT
          '''
-        self.writeBit(devAddr, \
+        self.writeBit(self.devAddr, \
                       MPU6050_RA_PWR_MGMT_2, \
                       MPU6050_PWR2_STBY_ZG_BIT, \
                       enabled)
@@ -3477,15 +3478,16 @@ class MPU6050:
 
 # FIFO_COUNT* registers
 
-'''* Get current FIFO buffer size.
- * This value indicates the number of bytes stored in the FIFO buffer. This
- * number is in turn the number of bytes that can be read from the FIFO buffer
- * and it is directly proportional to the number of samples available given the
- * set of sensor data bound to be stored in the FIFO (register 35 and 36).
- * @return Current FIFO buffer size
- '''
-def getFIFOCount(self):    self.readBytes(devAddr, MPU6050_RA_FIFO_COUNTH, 2, buffer)
-    return (((uint16_t)buffer[0]) << 8) | buffer[1]
+    def getFIFOCount(self):
+        '''* Get current FIFO buffer size.
+         * This value indicates the number of bytes stored in the FIFO buffer. This
+         * number is in turn the number of bytes that can be read from the FIFO buffer
+         * and it is directly proportional to the number of samples available given the
+         * set of sensor data bound to be stored in the FIFO (register 35 and 36).
+         * @return Current FIFO buffer size
+         '''
+        self.readBytes(self.devAddr, MPU6050_RA_FIFO_COUNTH, 2, buffer)
+        return ((buffer[0]) << 8) | buffer[1]
 
 
 # FIFO_R_W register
@@ -3516,11 +3518,11 @@ def getFIFOCount(self):    self.readBytes(devAddr, MPU6050_RA_FIFO_COUNTH, 2, bu
          *
          * @return Byte from FIFO buffer
          '''
-        return self.bus.read_byte_data(devAddr, MPU6050_RA_FIFO_R_W,)
+        return self.bus.read_byte_data(self.devAddr, MPU6050_RA_FIFO_R_W,)
 
     def getFIFOBytes(self, length):
         if length > 0:
-            return self.readBytes(devAddr, MPU6050_RA_FIFO_R_W, length)
+            return self.readBytes(self.devAddr, MPU6050_RA_FIFO_R_W, length)
         else:
             return 0
 
@@ -3530,7 +3532,7 @@ def getFIFOCount(self):    self.readBytes(devAddr, MPU6050_RA_FIFO_COUNTH, 2, bu
          * @see getFIFOByte()
          * @see MPU6050_RA_FIFO_R_W
          '''
-        self.bus.write_byte_data(devAddr, MPU6050_RA_FIFO_R_W, data)
+        self.bus.write_byte_data(self.devAddr, MPU6050_RA_FIFO_R_W, data)
 
 
 # WHO_AM_I register
@@ -3543,7 +3545,7 @@ def getFIFOCount(self):    self.readBytes(devAddr, MPU6050_RA_FIFO_COUNTH, 2, bu
          * @see MPU6050_WHO_AM_I_BIT
          * @see MPU6050_WHO_AM_I_LENGTH
          '''
-        return self.readBits(devAddr, \
+        return self.readBits(self.devAddr, \
                              MPU6050_RA_WHO_AM_I, \
                              MPU6050_WHO_AM_I_BIT, \
                              MPU6050_WHO_AM_I_LENGTH)
@@ -3558,7 +3560,7 @@ def getFIFOCount(self):    self.readBytes(devAddr, MPU6050_RA_FIFO_COUNTH, 2, bu
          * @see MPU6050_WHO_AM_I_BIT
          * @see MPU6050_WHO_AM_I_LENGTH
          '''
-        self.writeBits(devAddr, \
+        self.writeBits(self.devAddr, \
                        MPU6050_RA_WHO_AM_I, \
                        MPU6050_WHO_AM_I_BIT, \
                        MPU6050_WHO_AM_I_LENGTH, \
