@@ -426,8 +426,8 @@ class MPU6050:
         #    xxx   args: bitStart=4, length=3
         #    010   masked
         #   -> 010 shifted
-        count = self.bus.read_byte_data(devAddr, regAddr)
-        if (count != 0):
+        b = self.bus.read_byte_data(devAddr, regAddr)
+        if (b != []):
             mask = ((1 << length) - 1) << (bitStart - length + 1)
             b &= mask
             b >>= (bitStart - length + 1)
@@ -495,13 +495,14 @@ class MPU6050:
         self.setClockSource(MPU6050_CLOCK_PLL_XGYRO)
         self.setFullScaleGyroRange(MPU6050_GYRO_FS_250)
         self.setFullScaleAccelRange(MPU6050_ACCEL_FS_2)
+        self.setSleepEnabled(False)
 
     def testConnection(self):
         '''* Verify the I2C connection.
          * Make sure the device is connected and responds as expected.
          * @return True if connection is valid, otherwise
          '''
-        return getDeviceID() == 0x34
+        return self.getDeviceID() == 0x34
 
 
 # AUX_VDDIO register (InvenSense demo code calls this RA_*G_OFFS_TC)
